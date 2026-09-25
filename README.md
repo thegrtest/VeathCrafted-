@@ -1,6 +1,6 @@
 # Veath Crafted
 
-Local US-first prototype for made-to-order natural soap. The page follows one path: check water, see every starting ingredient, then request a custom bar. Customers can also request a soap consultation before the recipe is finalized. The storefront does **not** collect payment, send email, or book appointments.
+US-first request site for made-to-order natural soap. The page follows one path: describe the water at your tap, see every starting ingredient, then request a custom bar. Customers can also request a soap consultation before the recipe is finalized. The storefront does **not** collect payment, send email, or book appointments.
 
 ## Edit the storefront
 
@@ -31,10 +31,11 @@ node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1
 ## Water data
 
 - ZIP geocoding: [Zippopotam.us](https://www.zippopotam.us/). It supplies an approximate ZIP location, not a customer's address or tap source.
-- Public water supplier candidates: [EPA Public Water System Service Areas](https://www.epa.gov/ground-water-and-drinking-water/public-water-system-service-areas), version 3. Boundaries can be modeled, incomplete, or overlap. The customer must confirm their supplier.
-- Public system snapshot: the selected system ID is checked against [EPA ECHO drinking-water services](https://echo.epa.gov/tools/web-services/facility-search-drinking-water). The page shows its primary source-water type, the number of quarters with reported violations in the past three years, and a link to the detailed EPA report when available. [EPA says](https://echo.epa.gov/help/facility-search/drinking-water-search-results-help) these compliance records are delayed and cannot answer current tap-water questions. Violations may concern monitoring or reporting; the number is not a water-safety score.
+- Public water supplier candidates: [EPA Public Water System Service Areas](https://www.epa.gov/ground-water-and-drinking-water/public-water-system-service-areas), version 3. Boundaries can be modeled, incomplete, or overlap. The customer must explicitly select a supplier after checking their bill, even if only one candidate appears. They can enter a utility name manually when the map misses it; that name has no EPA system ID or automatic EPA snapshot.
+- Public system snapshot: the selected system ID is checked against [EPA ECHO drinking-water services](https://echo.epa.gov/tools/web-services/facility-search-drinking-water). The page shows its primary source-water type, a link to the detailed EPA report when available, and compliance history under an explanation. [EPA says](https://echo.epa.gov/help/facility-search/drinking-water-search-results-help) these compliance records can lag and cannot answer current tap-water questions. Violations may concern monitoring or reporting; the number is not a water-safety score.
 - The [annual Consumer Confidence Report](https://www.epa.gov/ccr) can provide more specific utility water-quality details. The site links to EPA's report finder, since report availability and format vary by utility.
-- Hardness classes: [USGS](https://pubs.usgs.gov/gip/gw/glossary.html): soft 0–60, moderately hard 61–120, hard 121–180, very hard above 180 mg/L as CaCO₃. Supplier lookup does not provide hardness. Customers can enter a utility or tap-test reading.
+- Hardness classes: [USGS](https://www.usgs.gov/water-science-school/science/hardness-water): soft 0–60, moderately hard 61–120, hard 121–180, very hard above 180 mg/L as CaCO₃. One grain per gallon is about 17.1 mg/L. Supplier lookup does not provide hardness. Customers can enter a utility or tap-test reading, identify its source, and report low lather, residue, or slippery rinsing. The API stores hardness in mg/L and adds reading provenance and washing observations to the request notes.
+- A home softener may change the tap water from a utility's published figures. Private well users are directed to [EPA well testing guidance](https://www.epa.gov/privatewells/protect-your-homes-water). Water profile copy discusses lather and rinse feel; it does not claim a measured safety assessment or automatically select a final soap formula.
 
 ## Before accepting paid orders
 

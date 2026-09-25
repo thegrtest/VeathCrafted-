@@ -13,7 +13,7 @@ const orderSchema = z.object({
   hardness: z.number().int().min(0).max(1000).nullable(),
   waterSupplier: z.string().trim().max(200).nullable(),
   waterSource: z.enum(["public", "private-well", "softened", "unknown"]),
-  notes: z.string().trim().max(1000),
+  notes: z.string().trim().max(2000),
   consultationRequested: z.boolean(),
   consultationNotes: z.string().trim().max(600),
   website: z.literal(""),
