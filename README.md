@@ -6,7 +6,7 @@ Local US-first prototype for made-to-order natural soap. The page follows one pa
 
 Change the business name, headline, ingredient list, scent and texture choices, and starting price in [lib/shop-content.ts](lib/shop-content.ts). The page and order API use this same file, so the displayed price and saved estimate stay aligned. The product ID is an internal database value; leave it as `custom-bar` unless you also plan to migrate existing orders.
 
-The listed ingredients are an example starting formula. Replace them with your real recipe before accepting customer requests. The page says that exact amounts and the final ingredient list are confirmed before production.
+The listed ingredients are an example starting formula. Replace them with your real recipe when it is ready. The page says that exact amounts and the final ingredient list are confirmed before production. The temporary public contact address and privacy page text are in `components/Experience.tsx` and `app/privacy/page.tsx`.
 
 ## Run locally
 

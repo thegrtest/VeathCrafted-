@@ -247,6 +247,6 @@ export default function Experience() {
         {orderId && <div className="status success" role="status"><Check size={20}/><span>Request saved. Reference {orderId.slice(0, 8).toUpperCase()}. {savedConsultationRequested ? "Your consultation request is included. We will use your email to arrange the conversation and discuss the formula and quote." : "We will use your email to discuss the final formula and quote."}</span></div>}
       </form>
     </section>
-    <footer className="site-footer"><strong>{shopContent.name}</strong><span>Soap tailored to you, down to the water.</span></footer>
+    <footer className="site-footer"><strong>{shopContent.name}</strong><span>Soap tailored to you, down to the water.</span><nav aria-label="Footer"><a href="mailto:daughertybrad56@gmail.com">Contact</a><a href="/privacy">Privacy</a></nav></footer>
   </>;
 }

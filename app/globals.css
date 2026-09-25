@@ -154,6 +154,11 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
 .order-form > .fine-print { margin: .8rem 0 0; }
 .site-footer { display: flex; justify-content: space-between; gap: 1rem; padding: 2rem clamp(1.25rem, 6vw, 7rem); background: #15343d; color: #d6e1df; font-size: .84rem; }
 .site-footer strong { color: #e9c990; letter-spacing: .07em; }
+.site-footer nav { display: flex; gap: 1.25rem; }
+.privacy-page { max-width: 720px; min-height: 100vh; margin: auto; padding: 5rem 1.5rem; }
+.privacy-page h1 { margin: 2rem 0 1.5rem; font-size: clamp(2.5rem, 5vw, 4rem); }
+.privacy-page p { color: #526a70; line-height: 1.7; }
+.privacy-page p a { color: #205a64; text-decoration: underline; }
 
 @media (max-width: 850px) {
   .site-header nav { display: none; }
@@ -179,4 +184,5 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
   .hardness-result span { display: block; margin-top: .2rem; }
   .site-footer { display: block; }
   .site-footer span { display: block; margin-top: .4rem; }
+  .site-footer nav { margin-top: .7rem; }
 }
