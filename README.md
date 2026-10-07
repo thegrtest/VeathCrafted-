@@ -14,7 +14,7 @@ The listed ingredients are an example starting formula. The first ingredient edi
 
 `/studio` uses Sites' ChatGPT sign-in and a server-side email allowlist. Set `ADMIN_EMAILS` through Sites to comma-separated authorized addresses; a hidden URL alone is not access control. Both the page and every catalog/photo write check identity, and writes also require a same-origin request. No admin email configured means access is denied. The current intended addresses are `cveath@icloud.com,daughertybrad56@gmail.com`.
 
-The editor can publish or remove finished bars, set the price and available quantity, write the actual ingredient list, and upload an optional photo to R2. Removal unpublishes a listing or ingredient rather than erasing order history. No finished bars are seeded or published by default. The studio also shows recent paid orders for fulfillment.
+The studio starts with a **Homepage photo** section. An owner can preview and upload a replacement JPG, PNG, or WebP image, edit its screen-reader description, or restore the bundled default. The chosen image is stored in R2 and its setting in D1; it appears in the home-page hero without a code deployment. The same editor can publish or remove finished bars, set the price and available quantity, write the actual ingredient list, and upload an optional product photo to R2. Removal unpublishes a listing or ingredient rather than erasing order history. No finished bars are seeded or published by default. The studio also shows recent paid orders for fulfillment.
 
 ## Ready-made Stripe Checkout
 

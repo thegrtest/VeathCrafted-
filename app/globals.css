@@ -314,7 +314,8 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
 .home-hero-copy { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: clamp(4rem, 7vw, 7.5rem) clamp(1.5rem, 7vw, 8rem); }
 .home-hero h1 { max-width: 760px; font-size: clamp(3.6rem, 6vw, 6.5rem); line-height: 1.03; margin-bottom: 1.5rem; }
 .home-hero-copy > p:not(.eyebrow) { max-width: 540px; color: #d8e5e2; font-size: 1.08rem; line-height: 1.75; }
-.home-hero-image { min-height: 410px; background: url("/soap-hero.png") center / cover no-repeat; }
+.home-hero-image { position: relative; min-height: 410px; overflow: hidden; background: #d8e2dc; }
+.home-hero-image img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .home-hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.4rem; }
 .hero-text-link { display: inline-flex; align-items: center; gap: .55rem; color: #f0e5ce; font-size: .93rem; font-weight: 700; }
 .home-paths, .ingredient-page-content { padding: clamp(4.5rem, 8vw, 8rem) clamp(1.25rem, 6vw, 7rem); }
@@ -398,6 +399,36 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
   .shop-empty-mark { width: 150px; }
   .ingredient-card { min-height: 0; }
   .site-header nav { gap: 1.2rem; font-size: .82rem; }
+}
+
+/* Studio appearance controls */
+.studio-nav { display: flex; flex-wrap: wrap; gap: .55rem; margin: 1.7rem 0 2rem; }
+.studio-nav a { padding: .6rem .85rem; border: 1px solid #d7e1dc; background: #fff; color: #28545b; font-size: .82rem; font-weight: 700; }
+.studio-nav a:hover { border-color: #91b1a7; text-decoration: none; }
+.studio-home-image { scroll-margin-top: 1.5rem; }
+.studio-home-image .studio-section-head > a { flex: none; margin-top: .35rem; }
+.studio-home-image-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(1.5rem, 3vw, 3rem); align-items: start; margin-top: 1.5rem; }
+.studio-home-preview { position: relative; width: 100%; min-width: 0; aspect-ratio: 1.3; overflow: hidden; background: #dce8df; }
+.studio-home-preview img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.studio-home-preview span { position: absolute; left: .9rem; bottom: .9rem; padding: .4rem .65rem; background: #fff; color: #234950; font-size: .75rem; font-weight: 700; }
+.studio-home-image .studio-form { border: 0; padding-top: 0; }
+.studio-home-image .studio-form input[type="file"] { max-width: 100%; }
+.studio-home-image .studio-form .fine-print { margin: 0; }
+.studio-home-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .8rem 1.2rem; }
+.studio-home-actions .quiet-button { margin-top: 0; }
+.studio-home-image .status { margin: .25rem 0 0; }
+.studio-catalog-heading { margin: 3.5rem 0 .75rem; }
+.studio-catalog-heading h2 { margin-bottom: .3rem; font-size: clamp(2rem, 3.3vw, 3rem); }
+.studio-catalog-heading p { margin: 0; color: #526a70; font-size: .9rem; }
+.studio-grid { margin-top: 1.2rem; }
+#ready-made-editor, #ingredient-editor, #paid-orders { scroll-margin-top: 1.5rem; }
+@media (max-width: 850px) {
+  .studio-home-image-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  .studio-home-image .studio-section-head { display: block; }
+  .studio-home-image .studio-section-head > a { margin-top: .7rem; }
+  .studio-home-preview { min-height: 0; }
 }
 @media (max-width: 440px) {
   .site-header { padding: .7rem 1rem 0; }

@@ -46,10 +46,9 @@ export default function CatalogManager({ initialIngredients, initialSoaps }: { i
     if (!file) return;
     setBusy(true); setError(""); setMessage("");
     try {
-      const body = new FormData(); body.append("photo", file);
-      const response = await fetch("/api/admin/photo", { method: "POST", body });
-      const data = await response.json() as { url?: string; error?: string };
-      if (!response.ok || !data.url) throw new Error(data.error || "Could not upload photo.");
+      const response = await fetch("/api/admin/photo", { method: "POST", headers: { "Content-Type": file.type }, body: file });
+      const data = await response.json().catch(() => ({})) as { url?: string; error?: string };
+      if (!response.ok || !data.url) throw new Error(data.error || "Could not upload photo. Check that it is under 4 MB.");
       setSoap((current) => ({ ...current, imageUrl: data.url! }));
       setMessage("Photo uploaded. Save the soap to use it.");
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not upload photo."); }
@@ -59,7 +58,7 @@ export default function CatalogManager({ initialIngredients, initialSoaps }: { i
   return <>
     {(message || error) && <p className={`status ${error ? "error" : "success"}`} role="status">{error || message}</p>}
     <div className="studio-grid">
-      <section className="studio-panel"><div className="studio-section-head"><div><h2>Ready-made soaps</h2><p>Add a finished batch with its actual ingredients, price, and bars available.</p></div><button type="button" className="quiet-button" onClick={() => { setSoap(blankSoap); setPrice(""); }}>New soap</button></div>
+      <section className="studio-panel" id="ready-made-editor"><div className="studio-section-head"><div><h2>Ready-made soaps</h2><p>Add a finished batch with its actual ingredients, price, and bars available.</p></div><button type="button" className="quiet-button" onClick={() => { setSoap(blankSoap); setPrice(""); }}>New soap</button></div>
         <div className="studio-list">{soaps.length ? soaps.map((item) => <div className="studio-list-item" key={item.id}><div><strong>{item.name}</strong><small>{item.active ? "Published" : "Unpublished"} · {item.stock} available · ${(item.priceCents / 100).toFixed(2)}</small></div><div><button type="button" onClick={() => { setSoap(item); setPrice((item.priceCents / 100).toFixed(2)); }}>Edit</button>{item.active && <button type="button" disabled={busy} onClick={() => void save({ action: "archiveSoap", id: item.id })}>Remove</button>}</div></div>) : <p className="fine-print">No ready-made soaps yet. The public shop will stay empty until you publish one.</p>}</div>
         <form className="studio-form" onSubmit={saveSoap}><h3>{soap.id ? `Edit ${soap.name}` : "Add a ready-made soap"}</h3>
           <label>Name<input required maxLength={120} value={soap.name} onChange={(event) => setSoap({ ...soap, name: event.target.value })}/></label>
@@ -74,7 +73,7 @@ export default function CatalogManager({ initialIngredients, initialSoaps }: { i
         </form>
       </section>
 
-      <section className="studio-panel"><div className="studio-section-head"><div><h2>Ingredient choices</h2><p>Control the starting formula and what customers may request or avoid.</p></div><button type="button" className="quiet-button" onClick={() => setIngredient({ ...blankIngredient, sortOrder: (ingredients.at(-1)?.sortOrder ?? 90) + 10 })}>New ingredient</button></div>
+      <section className="studio-panel" id="ingredient-editor"><div className="studio-section-head"><div><h2>Ingredient choices</h2><p>Control the starting formula and what customers may request or avoid.</p></div><button type="button" className="quiet-button" onClick={() => setIngredient({ ...blankIngredient, sortOrder: (ingredients.at(-1)?.sortOrder ?? 90) + 10 })}>New ingredient</button></div>
         <div className="studio-list">{ingredients.map((item) => <div className="studio-list-item" key={item.id}><div><strong>{item.name}</strong><small>{item.active ? [item.inBase ? "Starting bar" : "Optional", item.selectable ? "Customer choice" : "Information only"].join(" · ") : "Removed from site"}</small></div><div><button type="button" onClick={() => setIngredient(item)}>Edit</button>{item.active && <button type="button" disabled={busy} onClick={() => void save({ action: "archiveIngredient", id: item.id })}>Remove</button>}</div></div>)}</div>
         <form className="studio-form" onSubmit={saveIngredient}><h3>{ingredient.id ? `Edit ${ingredient.name}` : "Add an ingredient"}</h3>
           <label>Name<input required maxLength={100} value={ingredient.name} onChange={(event) => setIngredient({ ...ingredient, name: event.target.value })}/></label>

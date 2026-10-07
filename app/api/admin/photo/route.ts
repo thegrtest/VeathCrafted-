@@ -13,17 +13,17 @@ function matchesSignature(bytes: Uint8Array, type: string): boolean {
 export async function POST(request: Request) {
   if (!await getAdmin()) return Response.json({ error: "Access denied." }, { status: 403 });
   if (!isSameOriginWrite(request)) return Response.json({ error: "Request origin not allowed." }, { status: 403 });
-  if (!env.BUCKET) return Response.json({ error: "Photo storage unavailable." }, { status: 503 });
-  if (Number(request.headers.get("content-length") || 0) > 5_000_000) return Response.json({ error: "Photo must be under 4 MB." }, { status: 413 });
-  const form = await request.formData().catch(() => null);
-  const file = form?.get("photo");
-  if (!(file instanceof File) || !(file.type in formats) || file.size > 4_000_000 || file.size < 16) {
+  const type = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase() || "";
+  if (!(type in formats)) {
     return Response.json({ error: "Use a JPG, PNG, or WebP photo under 4 MB." }, { status: 400 });
   }
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  if (!matchesSignature(bytes, file.type)) return Response.json({ error: "The file is not a valid image." }, { status: 400 });
-  const extension = formats[file.type as keyof typeof formats];
+  if (Number(request.headers.get("content-length") || 0) > 4_000_000) return Response.json({ error: "Photo must be under 4 MB." }, { status: 413 });
+  const bytes = new Uint8Array(await request.arrayBuffer());
+  if (bytes.length > 4_000_000 || bytes.length < 16) return Response.json({ error: "Photo must be under 4 MB." }, { status: 413 });
+  if (!matchesSignature(bytes, type)) return Response.json({ error: "The file is not a valid image." }, { status: 400 });
+  if (!env.BUCKET) return Response.json({ error: "Photo storage unavailable." }, { status: 503 });
+  const extension = formats[type as keyof typeof formats];
   const filename = `${crypto.randomUUID()}.${extension}`;
-  await env.BUCKET.put(`soap-images/${filename}`, bytes, { httpMetadata: { contentType: file.type, cacheControl: "public, max-age=31536000, immutable" } });
+  await env.BUCKET.put(`soap-images/${filename}`, bytes, { httpMetadata: { contentType: type, cacheControl: "public, max-age=31536000, immutable" } });
   return Response.json({ url: `/api/soap-photo/${filename}` }, { status: 201 });
 }

@@ -1,18 +1,19 @@
 import { ArrowRight } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { getPublicCatalog } from "@/lib/catalog";
+import { getHomeHero } from "@/lib/home-hero-server";
 import { shopContent } from "@/lib/shop-content";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const { ingredients } = await getPublicCatalog();
+  const [{ ingredients }, hero] = await Promise.all([getPublicCatalog(), getHomeHero()]);
   const startingNames = ingredients.filter((item) => item.inBase).map((item) => item.name);
   return <main id="top">
     <SiteHeader active="home"/>
     <section className="home-hero">
       <div className="home-hero-copy"><p className="eyebrow">SMALL BATCH · MADE WITH CARE</p><h1>{shopContent.headline}</h1><p>{shopContent.introduction}</p><div className="home-hero-actions"><a className="button button-light" href="/custom">Make it yours <ArrowRight size={18}/></a><a className="hero-text-link" href="/shop">Shop finished soaps <ArrowRight size={17}/></a></div></div>
-      <div className="home-hero-image" role="img" aria-label="Hand-cut handmade soap bars"/>
+      <div className="home-hero-image"><img src={hero.imageUrl} alt={hero.alt}/></div>
     </section>
     <section className="home-paths" aria-labelledby="paths-heading"><div className="home-section-head"><p className="eyebrow">START HERE</p><h2 id="paths-heading">A simple way to find your soap.</h2><p>Explore a finished batch, shape a bar around your preferences, or look closely at what goes into it.</p></div><div className="path-grid">
       <a className="path-card" id="request" href="/custom"><span className="path-index">01 / CUSTOM SOAP</span><h3>Make it yours.</h3><p>Choose ingredients you prefer or avoid, scent, texture, and quantity. We review the formula with you before making it.</p><span className="path-link">Start a request <ArrowRight size={18}/></span></a>
