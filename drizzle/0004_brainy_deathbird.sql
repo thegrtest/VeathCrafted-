@@ -1,0 +1,1 @@
+ALTER TABLE `ready_orders` ADD `notification_sent_at` text;

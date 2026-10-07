@@ -15,6 +15,27 @@
       "when": 1790301637291,
       "tag": "0001_new_tusk",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791335873114,
+      "tag": "0002_steady_wendell_rand",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1791336130700,
+      "tag": "0003_clean_hiroim",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1791336165116,
+      "tag": "0004_brainy_deathbird",
+      "breakpoints": true
     }
   ]
 }

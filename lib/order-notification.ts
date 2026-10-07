@@ -9,6 +9,8 @@ type OrderNotification = {
   waterSupplier: string | null;
   waterSource: string;
   notes: string;
+  preferredIngredients: string[];
+  avoidedIngredients: string[];
   consultationRequested: boolean;
   consultationNotes: string;
 };
@@ -33,6 +35,8 @@ export function formatOrderNotification(order: OrderNotification, id: string, es
     estimatedTotalCents > 0 ? `Starting estimate: $${(estimatedTotalCents / 100).toFixed(2)} (before shipping or custom changes)` : "Price: quote after reviewing the request",
     `Scent: ${order.scent}`,
     `Texture: ${order.texture}`,
+    `Please include: ${order.preferredIngredients.join(", ") || "no preference"}`,
+    `Please avoid: ${order.avoidedIngredients.join(", ") || "none listed"}`,
     "",
     `Water used when washing: ${order.waterSource}`,
     `Water supplier: ${order.waterSupplier || "not provided"}`,

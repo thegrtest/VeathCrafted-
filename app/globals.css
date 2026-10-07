@@ -77,6 +77,25 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
 .button:disabled { opacity: .6; cursor: wait; }
 .button-light { background: #e9c990; color: #18343c; }
 .button-dark { background: #173d46; color: #fff; }
+.ready-section { padding: clamp(3.5rem, 6vw, 6rem) clamp(1.25rem, 6vw, 7rem); background: #f7f7f3; }
+.ready-heading { max-width: 920px; margin: 0 auto 2rem; }
+.ready-heading .eyebrow { color: #8a6b43; margin-bottom: .65rem; }
+.ready-heading h2 { margin: 0 0 .6rem; font-size: clamp(2.4rem, 4vw, 4rem); }
+.ready-heading > p:last-child { max-width: 690px; color: #526a70; }
+.ready-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 1.5rem; max-width: 1120px; margin: auto; }
+.ready-card { overflow: hidden; border: 1px solid #dce4e0; background: #fff; }
+.ready-card > img, .ready-placeholder { width: 100%; height: 235px; object-fit: cover; display: block; }
+.ready-placeholder { background: #dbe7df url("/soap-hero.png") center / cover no-repeat; }
+.ready-card-body { padding: 1.4rem; }
+.ready-stock { color: #8a6b43; font-size: .73rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.ready-card h3 { margin: .35rem 0 .5rem; font-size: 1.8rem; }
+.ready-card-body > p { color: #526a70; font-size: .9rem; line-height: 1.55; }
+.ready-ingredients { display: grid; gap: .2rem; padding: .9rem 0; border-top: 1px solid #dce5e0; color: #526a70; font-size: .82rem; }
+.ready-ingredients strong { color: #18343c; }
+.ready-purchase { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: .5rem; }
+.ready-purchase > strong { font: 1.35rem Georgia, serif; white-space: nowrap; }
+.ready-purchase .button { min-height: 44px; font-size: .81rem; white-space: nowrap; }
+.ready-setup-note { max-width: 1120px; margin: 1rem auto 0; color: #61777b; font-size: .8rem; }
 
 .step-section { padding: clamp(3.5rem, 6vw, 6rem) clamp(1.25rem, 6vw, 7rem); }
 .step-heading { display: flex; gap: 1.25rem; max-width: 920px; margin: 0 auto 2rem; }
@@ -155,6 +174,15 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
 .ingredient-row strong { font-size: .96rem; }
 .ingredient-row span { color: #526a70; font-size: .9rem; }
 .ingredient-footnote { max-width: 920px; margin: 1rem auto 0; color: #526a70; font-size: .85rem; line-height: 1.6; }
+.ingredient-choices { margin: 0 0 1.4rem; padding: 0; border: 0; }
+.ingredient-choices legend { font: 1.35rem Georgia, serif; margin-bottom: .35rem; }
+.ingredient-choices > p { color: #526a70; font-size: .84rem; line-height: 1.55; }
+.ingredient-choice-list { border-top: 1px solid #dce5e0; }
+.ingredient-choice { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .7rem 0; border-bottom: 1px solid #dce5e0; }
+.ingredient-choice strong, .ingredient-choice small { display: block; }
+.ingredient-choice strong { font-size: .88rem; }
+.ingredient-choice small { color: #61777b; font-size: .76rem; }
+.ingredient-choice select { min-width: 150px; padding: .5rem; border: 1px solid #b8c8c4; background: #fff; color: #18343c; }
 
 .request-section { display: grid; grid-template-columns: minmax(230px, .7fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 5rem); max-width: 1480px; margin: auto; }
 .request-section .step-heading { margin: 0; }
@@ -190,6 +218,51 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
 .privacy-page h1 { margin: 2rem 0 1.5rem; font-size: clamp(2.5rem, 5vw, 4rem); }
 .privacy-page p { color: #526a70; line-height: 1.7; }
 .privacy-page p a { color: #205a64; text-decoration: underline; }
+.completion-page { max-width: 680px; min-height: 100vh; margin: auto; padding: 5rem 1.5rem; }
+.completion-page > a:first-child { color: #205a64; font-weight: 700; font-size: .86rem; }
+.completion-page .eyebrow { color: #8a6b43; margin-top: 4rem; }
+.completion-page h1 { font-size: clamp(2.6rem, 5vw, 4.5rem); }
+.completion-page p:not(.eyebrow) { color: #526a70; line-height: 1.7; }
+.studio-page { max-width: 1320px; min-height: 100vh; margin: auto; padding: 2rem clamp(1.25rem, 4vw, 4rem) 5rem; }
+.studio-header { display: flex; justify-content: space-between; gap: 1rem; color: #526a70; font-size: .84rem; }
+.studio-header a { color: #205a64; font-weight: 700; }
+.studio-page h1 { margin: 2.2rem 0 .4rem; font-size: clamp(2.6rem, 5vw, 4.5rem); }
+.studio-intro { max-width: 700px; color: #526a70; }
+.studio-checkout-status { max-width: 900px; padding: .85rem 1rem; font-size: .84rem; line-height: 1.55; }
+.studio-checkout-status.pending { border-left: 3px solid #c8aa73; background: #f6f0e3; }
+.studio-checkout-status.ready { border-left: 3px solid #6fa888; background: #e4f2e9; }
+.studio-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+.studio-panel { min-width: 0; padding: clamp(1.2rem, 2.5vw, 2rem); border: 1px solid #dce4e0; background: #fff; }
+.studio-section-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
+.studio-section-head h2 { margin: 0 0 .3rem; font-size: 2rem; }
+.studio-section-head p { color: #526a70; font-size: .84rem; }
+.studio-section-head .quiet-button { white-space: nowrap; }
+.studio-list { margin: .8rem 0 1.5rem; border-top: 1px solid #dce5e0; }
+.studio-list-item { display: flex; justify-content: space-between; gap: 1rem; align-items: center; padding: .75rem 0; border-bottom: 1px solid #dce5e0; }
+.studio-list-item strong, .studio-list-item small { display: block; }
+.studio-list-item strong { font-size: .9rem; }
+.studio-list-item small { color: #61777b; font-size: .76rem; }
+.studio-list-item > div:last-child { display: flex; gap: .5rem; }
+.studio-list-item button { border: 0; background: none; color: #205a64; font-size: .79rem; font-weight: 700; }
+.studio-list-item button:disabled { opacity: .5; }
+.studio-form { display: grid; gap: .9rem; padding-top: 1.2rem; border-top: 2px solid #dce5e0; }
+.studio-form h3 { margin: 0; font-size: 1.35rem; }
+.studio-form label { display: grid; gap: .3rem; font-size: .86rem; font-weight: 700; }
+.studio-form label small { color: #61777b; font-weight: 400; }
+.studio-form input:not([type="checkbox"]), .studio-form textarea { width: 100%; padding: .65rem .7rem; border: 1px solid #b8c8c4; border-radius: 2px; background: #fff; font-weight: 400; }
+.studio-form textarea { resize: vertical; }
+.studio-form .studio-check { display: flex; align-items: center; gap: .6rem; font-weight: 400; }
+.studio-check input { width: 17px; height: 17px; accent-color: #173d46; }
+.studio-pair { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.studio-form .button { justify-self: start; }
+.studio-photo-preview { display: flex; align-items: end; gap: 1rem; }
+.studio-photo-preview img { width: 110px; height: 85px; object-fit: cover; }
+.studio-photo-preview button { border: 0; background: none; color: #205a64; font-size: .8rem; font-weight: 700; }
+.studio-purchases { margin-top: 1.5rem; padding: clamp(1.2rem, 2.5vw, 2rem); border: 1px solid #dce4e0; background: #fff; }
+.purchase-list { border-top: 1px solid #dce5e0; }
+.purchase-row { display: grid; grid-template-columns: 1fr 1.5fr; gap: 1rem; padding: .9rem 0; border-bottom: 1px solid #dce5e0; font-size: .85rem; }
+.purchase-row strong, .purchase-row small { display: block; }
+.purchase-row small { color: #61777b; line-height: 1.5; }
 
 @media (max-width: 850px) {
   .site-header nav { display: none; }
@@ -198,6 +271,7 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
   .hero-image { height: 280px; background-position: center 58%; }
   .water-grid, .water-profile, .request-section { grid-template-columns: 1fr; }
   .request-summary { margin-left: 2.4rem; }
+  .studio-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 520px) {
@@ -219,4 +293,8 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
   .site-footer { display: block; }
   .site-footer span { display: block; margin-top: .4rem; }
   .site-footer nav { margin-top: .7rem; }
+  .ingredient-choice { display: grid; }
+  .ingredient-choice select { width: 100%; }
+  .studio-header { display: grid; }
+  .purchase-row { grid-template-columns: 1fr; }
 }

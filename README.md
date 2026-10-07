@@ -1,12 +1,29 @@
 # Veath Crafted
 
-US-first request site for made-to-order natural soap. The page leads with ingredients and personal preferences, then invites customers to request a custom bar. An optional water check provides supplier, hardness, and washing context for customers who want it. Customers can also request a soap consultation before the recipe is finalized. The storefront does **not** collect payment or book appointments. It saves requests in D1 and asks Resend to send an owner notification.
+US-first storefront for made-to-order natural soap and finished batches. Custom bars remain reviewed quotes: customers can choose ingredients they prefer or wish to avoid, and can optionally describe their water or request a consultation. The owner can manage ingredients and ready-made soaps at `/studio`. Finished batches can use Stripe-hosted Checkout after payment setup; card details never enter this Site.
 
 ## Edit the storefront
 
-Change the business name, headline, ingredient list, scent and texture choices in [lib/shop-content.ts](lib/shop-content.ts). The starting price is zero until you set a real price; the public page quotes each request after review. The product ID is an internal database value; leave it as `custom-bar` unless you also plan to migrate existing orders.
+Change the business name, headline, scent, and texture choices in [lib/shop-content.ts](lib/shop-content.ts). The starting price is zero until you set a real price; custom requests are quoted after review. The product ID is an internal database value; leave it as `custom-bar` unless you also plan to migrate existing orders.
 
-The listed ingredients are an example starting formula. Replace them with your real recipe when it is ready. The page says that exact amounts and the final ingredient list are confirmed before production. The public contact address is `shopContent.contactEmail` in `lib/shop-content.ts`. The owner inbox recipients are server-side configuration, so the second inbox is not shown to customers.
+The listed ingredients are an example starting formula. The first ingredient edit in `/studio` copies them into D1, where you can add, edit, or remove them from the public site. Mark an ingredient as part of the starting bar and/or selectable for a customer's quote. The final formula and amounts are confirmed before production; customer choices are preferences, not an automatically generated recipe. Ready-made batches have a separate fixed ingredient list for each listing. The public contact address is `shopContent.contactEmail` in `lib/shop-content.ts`.
+
+## Protected shop studio
+
+`/studio` uses Sites' ChatGPT sign-in and a server-side email allowlist. Set `ADMIN_EMAILS` through Sites to comma-separated authorized addresses; a hidden URL alone is not access control. Both the page and every catalog/photo write check identity, and writes also require a same-origin request. No admin email configured means access is denied. The current intended addresses are `cveath@icloud.com,daughertybrad56@gmail.com`.
+
+The editor can publish or remove finished bars, set the price and available quantity, write the actual ingredient list, and upload an optional photo to R2. Removal unpublishes a listing or ingredient rather than erasing order history. No finished bars are seeded or published by default. The studio also shows recent paid orders for fulfillment.
+
+## Ready-made Stripe Checkout
+
+Payment is off by default. Configure these server-side Sites values before switching `CHECKOUT_ENABLED` from `0` to `1`:
+
+- `STRIPE_SECRET_KEY` — Stripe secret key, stored as a Sites secret.
+- `STRIPE_WEBHOOK_SECRET` — signing secret for `https://veathcrafted.com/api/stripe-webhook`, stored as a Sites secret.
+- `SHIPPING_CENTS` — fixed US shipping charge in cents, including `0` if shipping is included in the bar price.
+- `CHECKOUT_ENABLED` — set to `1` only after test checkout, webhook delivery, shipping, and tax settings are reviewed. While off, listed bars use an email inquiry link.
+
+In Stripe, send `checkout.session.completed` and `checkout.session.expired` events to the webhook URL. The site creates a new Stripe-hosted Checkout Session for each purchase. It uses the server's stored price, reserves the requested bars for about 31 minutes, and releases them on the signed expiration event. Signed paid events mark an order paid and email the two owner inboxes through Resend. Fulfillment must be confirmed against Stripe; the browser success page is not proof of payment. Checkout currently accepts cards, one soap type per session, and US shipping with a flat charge. No live product or price has been added yet.
 
 ## Request email
 
@@ -29,10 +46,13 @@ npm.cmd ci
 npm.cmd run build
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_smiling_pestilence.sql
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0001_new_tusk.sql
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0002_steady_wendell_rand.sql
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0003_clean_hiroim.sql
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0004_brainy_deathbird.sql
 npm.cmd run dev
 ```
 
-Open the printed local URL. Apply each migration only once to a local database. If you already have the original database, apply only `0001_new_tusk.sql`. On subsequent runs, use `npm.cmd run dev`. Local order data lives in ignored `.wrangler/state`, while the schema migrations stay with the source.
+Open the printed local URL. Apply each migration only once to a local database. If you already have migrations 0000 and 0001, apply only 0002 through 0004. On subsequent runs, use `npm.cmd run dev`. Local data lives in ignored `.wrangler/state`, while the schema migrations stay with the source.
 
 To inspect local order requests:
 
@@ -51,7 +71,7 @@ node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1
 
 ## Before accepting paid orders
 
-Replace the example ingredient list and starting price with the actual business details. Specify bar size, production lead time, shipping rules, final formula disclosures, and any ingredient/allergen notices. Configure and test the email sender and both inboxes. Add an authenticated owner view, payment checkout, and stronger spam protection before scaling sales. The current order flow remains a quote request saved to D1; no order is charged.
+Add the real ready-made batch details, including ingredients, bar size, price, available quantity, and a shipping policy. Configure Stripe and verify a test payment plus signed webhook before setting `CHECKOUT_ENABLED=1`. The custom bar flow remains a quote request saved to D1; it never charges the customer.
 
 The app uses Vinext with a Cloudflare-compatible D1 binding named `DB`. `.openai/hosting.json` records that binding for a later Sites deployment.
 

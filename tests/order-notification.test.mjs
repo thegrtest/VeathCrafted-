@@ -13,13 +13,15 @@ const order = {
   waterSupplier: "CHICAGO (EPA IL0316000)",
   waterSource: "public",
   notes: "Soap barely lathers; avoid lavender",
+  preferredIngredients: ["Shea butter"],
+  avoidedIngredients: ["Coconut oil"],
   consultationRequested: true,
   consultationNotes: "Discuss harder water",
 };
 
 test("owner notice includes the request details needed to reply", () => {
   const body = formatOrderNotification(order, "abc-123", 2400);
-  for (const expected of ["abc-123", "customer@example.com", "60614", "$24.00", "137 mg/L", "CHICAGO", "avoid lavender", "Discuss harder water"]) {
+  for (const expected of ["abc-123", "customer@example.com", "60614", "$24.00", "137 mg/L", "CHICAGO", "avoid lavender", "Discuss harder water", "Shea butter", "Coconut oil"]) {
     assert.ok(body.includes(expected), `missing ${expected}`);
   }
 });

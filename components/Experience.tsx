@@ -5,6 +5,8 @@ import { ArrowRight, Check, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { shopContent } from "@/lib/shop-content";
+import type { Ingredient, ReadySoap } from "@/lib/catalog";
+import ReadyMadeShop from "@/components/ReadyMadeShop";
 
 type Supplier = { id: string; name: string; areaType: string | null };
 type Lookup = { suppliers: Supplier[]; place: string | null; approximate: boolean };
@@ -27,7 +29,7 @@ function hardnessCategory(value: number | null) {
   return "Very hard";
 }
 
-export default function Experience() {
+export default function Experience({ ingredients, soaps, checkoutReady }: { ingredients: Ingredient[]; soaps: ReadySoap[]; checkoutReady: boolean }) {
   const [zip, setZip] = useState("");
   const lookupRequest = useRef(0);
   const [lookup, setLookup] = useState<Lookup | null>(null);
@@ -48,6 +50,7 @@ export default function Experience() {
   const [texture, setTexture] = useState<string>(shopContent.textures[0].id);
   const [quantity, setQuantity] = useState(2);
   const [notes, setNotes] = useState("");
+  const [ingredientChoices, setIngredientChoices] = useState<Record<string, "prefer" | "avoid">>({});
   const [consultationRequested, setConsultationRequested] = useState(false);
   const [consultationNotes, setConsultationNotes] = useState("");
   const [customerName, setCustomerName] = useState("");
@@ -179,6 +182,8 @@ export default function Experience() {
           hardness: category ? hardness : null,
           waterSupplier: supplier ? `${supplier.name.slice(0, 180)} (EPA ${supplier.id})` : manualSupplier.trim() || null, waterSource,
           notes: [waterDetails, notes.trim()].filter(Boolean).join("\n"),
+          preferredIngredientIds: Object.entries(ingredientChoices).filter(([, choice]) => choice === "prefer").map(([id]) => id),
+          avoidedIngredientIds: Object.entries(ingredientChoices).filter(([, choice]) => choice === "avoid").map(([id]) => id),
           consultationRequested, consultationNotes: consultationRequested ? consultationNotes : "", website,
         }) });
       const data = await response.json() as { id?: string; error?: string; emailNotification?: "accepted" | "unavailable" };
@@ -194,9 +199,10 @@ export default function Experience() {
   }
 
   return <>
+    <ReadyMadeShop soaps={soaps} checkoutReady={checkoutReady}/>
     <section className="step-section ingredients-section" id="ingredients">
       <div className="step-heading"><span className="step-number">01</span><div><h2>Know every ingredient.</h2><p>Here is our starting bar and what each ingredient does. Tell us what you prefer or need to avoid; we will share the final ingredient list and amounts before making it.</p></div></div>
-      <div className="ingredient-list" role="list">{shopContent.product.ingredients.map((ingredient) => <div className="ingredient-row" role="listitem" key={ingredient.name}><strong>{ingredient.name}</strong><span>{ingredient.purpose}</span></div>)}</div>
+      <div className="ingredient-list" role="list">{ingredients.filter((ingredient) => ingredient.inBase).map((ingredient) => <div className="ingredient-row" role="listitem" key={ingredient.id}><strong>{ingredient.name}</strong><span>{ingredient.purpose}</span></div>)}</div>
       <p className="ingredient-footnote">Your scent, texture, and other requests may change this starting formula. Sodium hydroxide is used during soapmaking.</p>
     </section>
 
@@ -274,6 +280,7 @@ export default function Experience() {
       </div>
       <form className="order-form" onSubmit={submitOrder}>
         <div className="form-trap" aria-hidden="true"><label htmlFor="company-website">Company website</label><input id="company-website" name="companyWebsite" tabIndex={-1} autoComplete="off"/></div>
+        {ingredients.some((item) => item.selectable) && <fieldset className="ingredient-choices"><legend>Choose your ingredients</legend><p>Tell us what you would like to include or avoid. We will review what works in a safe soap formula before quoting it.</p><div className="ingredient-choice-list">{ingredients.filter((item) => item.selectable).map((item) => <label className="ingredient-choice" key={item.id}><span><strong>{item.name}</strong><small>{item.purpose}</small></span><select aria-label={`${item.name} preference`} value={ingredientChoices[item.id] ?? ""} onChange={(event) => setIngredientChoices((current) => { const next = { ...current }; const choice = event.target.value as "prefer" | "avoid" | ""; if (choice) next[item.id] = choice; else delete next[item.id]; return next; })}><option value="">No preference</option><option value="prefer">Please include</option><option value="avoid">Please avoid</option></select></label>)}</div></fieldset>}
         <div className="form-grid">
           <div><label className="field-label" htmlFor="scent">Scent</label><Select value={scent} onValueChange={setScent}><SelectTrigger id="scent" className="shop-select"><SelectValue/></SelectTrigger><SelectContent>{shopContent.scents.map((item) => <SelectItem key={item.id} value={item.id}>{item.label}</SelectItem>)}</SelectContent></Select></div>
           <div><label className="field-label" htmlFor="texture">Texture</label><Select value={texture} onValueChange={setTexture}><SelectTrigger id="texture" className="shop-select"><SelectValue/></SelectTrigger><SelectContent>{shopContent.textures.map((item) => <SelectItem key={item.id} value={item.id}>{item.label}</SelectItem>)}</SelectContent></Select></div>
