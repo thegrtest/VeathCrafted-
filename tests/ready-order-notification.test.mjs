@@ -16,12 +16,12 @@ const order = {
 test("paid order email gives the owner the amount and delivery details", async () => {
   let payload;
   const sent = await sendPaidOrderNotice({ apiKey: "test-key", from: "Veath Crafted <orders@veathcrafted.com>",
-    to: "cveath@icloud.com,daughertybrad56@gmail.com" }, order, async (_url, options) => {
+    to: "cveath@icloud.com" }, order, async (_url, options) => {
     payload = JSON.parse(options.body);
     return Response.json({ id: "test-message" });
   });
   assert.equal(sent, true);
-  assert.deepEqual(payload.to, ["cveath@icloud.com", "daughertybrad56@gmail.com"]);
+  assert.deepEqual(payload.to, ["cveath@icloud.com"]);
   assert.equal(payload.reply_to, "customer@example.com");
   for (const expected of ["$28.50", "123 Example St", "Oat & olive bar"]) {
     assert.ok(payload.text.includes(expected), `missing ${expected}`);

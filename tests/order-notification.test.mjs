@@ -32,7 +32,7 @@ test("quote-only requests do not imply an example price", () => {
   assert.doesNotMatch(body, /\$0\.00/);
 });
 
-test("email is sent to both configured inboxes with a stable request key", async () => {
+test("email is sent to the configured owner inbox with a stable request key", async () => {
   let call;
   const transport = async (url, options) => {
     call = { url, options };
@@ -41,13 +41,13 @@ test("email is sent to both configured inboxes with a stable request key", async
   const result = await sendOrderNotification({
     apiKey: "test-key",
     from: "Veath Crafted <orders@veathcrafted.com>",
-    to: "cveath@icloud.com, daughertybrad56@gmail.com",
+    to: "cveath@icloud.com",
   }, order, "abc-123", 2400, transport);
   assert.equal(result, "accepted");
   assert.equal(call.url, "https://api.resend.com/emails");
   assert.equal(call.options.headers["Idempotency-Key"], "veath-order/abc-123");
   const payload = JSON.parse(call.options.body);
-  assert.deepEqual(payload.to, ["cveath@icloud.com", "daughertybrad56@gmail.com"]);
+  assert.deepEqual(payload.to, ["cveath@icloud.com"]);
   assert.equal(payload.reply_to, "customer@example.com");
   assert.match(payload.subject, /Consultation/);
   assert.match(payload.text, /NEXT STEP: Reply to this email/);

@@ -25,7 +25,7 @@ Payment is off by default. Configure these server-side Sites values before switc
 - `SHIPPING_CENTS` — fixed US shipping charge in cents, including `0` if shipping is included in the bar price.
 - `CHECKOUT_ENABLED` — set to `1` only after test checkout, webhook delivery, shipping, and tax settings are reviewed. While off, listed bars use an email inquiry link.
 
-In Stripe, send `checkout.session.completed` and `checkout.session.expired` events to the webhook URL. The site creates a new Stripe-hosted Checkout Session for each purchase. It uses the server's stored price, reserves the requested bars for about 31 minutes, and releases them on the signed expiration event. Signed paid events mark an order paid and email the two owner inboxes through Resend. Fulfillment must be confirmed against Stripe; the browser success page is not proof of payment. Checkout currently accepts cards, one soap type per session, and US shipping with a flat charge. No live product or price has been added yet.
+In Stripe, send `checkout.session.completed` and `checkout.session.expired` events to the webhook URL. The site creates a new Stripe-hosted Checkout Session for each purchase. It uses the server's stored price, reserves the requested bars for about 31 minutes, and releases them on the signed expiration event. Signed paid events mark an order paid and email the owner inbox through Resend. Fulfillment must be confirmed against Stripe; the browser success page is not proof of payment. Checkout currently accepts cards, one soap type per session, and US shipping with a flat charge. No live product or price has been added yet.
 
 ## Request email
 
@@ -33,9 +33,9 @@ The Site uses Resend for owner notifications. Set the following **server-only ru
 
 - `RESEND_API_KEY` — secret API key with sending permission.
 - `ORDER_EMAIL_FROM` — a sender on a domain verified for sending in the same Resend account, such as `Veath Crafted <orders@veathcrafted.com>` **after** that domain is verified. The iCloud contact address is a recipient and reply contact, not an authenticated sender for a domain the business controls.
-- `ORDER_EMAIL_TO` — comma-separated inboxes: `cveath@icloud.com,daughertybrad56@gmail.com` for the current trial.
+- `ORDER_EMAIL_TO` — owner notification inbox: `cveath@icloud.com`.
 
-Resend accepts one plain-text message addressed to both owner inboxes, with the customer's email as `reply_to`. It includes the reference, customer and delivery details, ingredient preferences, water details, consultation notes, and starting estimate. Its idempotency key is derived from the stored request ID. **An accepted API call is not proof of inbox delivery**; check both inboxes and provider delivery events with a real test request.
+Resend accepts one branded HTML message with a plain-text version addressed to the owner inbox, with the customer's email as `reply_to`. It includes the reference, customer and delivery details, ingredient preferences, water details, consultation notes, and starting estimate. Its idempotency key is derived from the stored request ID. **An accepted API call is not proof of inbox delivery**; check the inbox and provider delivery events with a real test request.
 
 The order is saved before the notification is attempted. If email is missing or rejected, the API still returns the saved reference and the form directs the customer to email that reference to the public contact address. The saved request remains in D1 for manual recovery. This initial implementation does not automatically retry failed mail or email the customer.
 
