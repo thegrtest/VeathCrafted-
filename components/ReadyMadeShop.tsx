@@ -20,7 +20,7 @@ export default function ReadyMadeShop({ soaps, checkoutReady }: { soaps: ReadySo
   }
 
   if (!soaps.length) return null;
-  return <section className="ready-section" id="ready-soaps"><div className="ready-heading"><p className="eyebrow">READY-MADE BATCHES</p><h2>Already made. Ready for you.</h2><p>Each bar has a fixed ingredient list and price. Choose a batch for a faster checkout, or request a custom recipe below.</p></div>
+  return <section className="ready-section" id="ready-soaps"><div className="ready-heading"><p className="eyebrow">AVAILABLE NOW</p><h2>Current batches.</h2><p>Each bar has its own ingredient list and price.</p></div>
     {error && <p className="status error" role="alert">{error}</p>}
     <div className="ready-grid">{soaps.map((soap) => <article className="ready-card" key={soap.id}>
       {soap.imageUrl ? <img src={soap.imageUrl} alt={`${soap.name} soap bar`}/> : <div className="ready-placeholder" role="img" aria-label="Handmade soap"/>}

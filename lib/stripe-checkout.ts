@@ -28,7 +28,7 @@ export async function createStripeCheckout(input: {
     "shipping_options[0][shipping_rate_data][fixed_amount][currency]": "usd",
     "shipping_options[0][shipping_rate_data][display_name]": "Standard US shipping",
     success_url: `${input.origin}/order-complete?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${input.origin}/#ready-soaps`,
+    cancel_url: `${input.origin}/shop#ready-soaps`,
     client_reference_id: input.orderId,
     "metadata[order_id]": input.orderId,
     expires_at: String(input.expiresAt),

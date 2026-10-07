@@ -5,8 +5,7 @@ import { ArrowRight, Check, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { shopContent } from "@/lib/shop-content";
-import type { Ingredient, ReadySoap } from "@/lib/catalog";
-import ReadyMadeShop from "@/components/ReadyMadeShop";
+import type { Ingredient } from "@/lib/catalog";
 
 type Supplier = { id: string; name: string; areaType: string | null };
 type Lookup = { suppliers: Supplier[]; place: string | null; approximate: boolean };
@@ -29,7 +28,7 @@ function hardnessCategory(value: number | null) {
   return "Very hard";
 }
 
-export default function Experience({ ingredients, soaps, checkoutReady }: { ingredients: Ingredient[]; soaps: ReadySoap[]; checkoutReady: boolean }) {
+export default function Experience({ ingredients }: { ingredients: Ingredient[] }) {
   const [zip, setZip] = useState("");
   const lookupRequest = useRef(0);
   const [lookup, setLookup] = useState<Lookup | null>(null);
@@ -199,13 +198,39 @@ export default function Experience({ ingredients, soaps, checkoutReady }: { ingr
   }
 
   return <>
-    <ReadyMadeShop soaps={soaps} checkoutReady={checkoutReady}/>
-    <section className="step-section ingredients-section" id="ingredients">
-      <div className="step-heading"><span className="step-number">01</span><div><h2>Know every ingredient.</h2><p>Here is our starting bar and what each ingredient does. Tell us what you prefer or need to avoid; we will share the final ingredient list and amounts before making it.</p></div></div>
-      <div className="ingredient-list" role="list">{ingredients.filter((ingredient) => ingredient.inBase).map((ingredient) => <div className="ingredient-row" role="listitem" key={ingredient.id}><strong>{ingredient.name}</strong><span>{ingredient.purpose}</span></div>)}</div>
-      <p className="ingredient-footnote">Your scent, texture, and other requests may change this starting formula. Sodium hydroxide is used during soapmaking.</p>
-    </section>
 
+    <section className="step-section request-section" id="request">
+      <div className="request-intro"><div className="step-heading"><span className="step-number">01</span><div><h2>Tell us what you like.</h2><p>Choose the details that matter to you. We will confirm the recipe and total before production.</p></div></div>
+        <div className="request-summary"><strong>{shopContent.product.name}</strong><span>Made to order · price quoted after review</span>{waterSource !== "unknown" && <span>Water: {waterSource === "public" ? "public utility" : waterSource === "private-well" ? "private well" : "home softened"}</span>}{(supplier || manualSupplier.trim()) && <span>Supplier: {supplier?.name ?? manualSupplier.trim()}</span>}{category && <span>Hardness reading: {category.toLowerCase()} · {hardness} mg/L</span>}</div>
+      </div>
+      <form className="order-form" onSubmit={submitOrder}>
+        <div className="form-trap" aria-hidden="true"><label htmlFor="company-website">Company website</label><input id="company-website" name="companyWebsite" tabIndex={-1} autoComplete="off"/></div>
+        {ingredients.some((item) => item.selectable) && <fieldset className="ingredient-choices"><legend>Choose your ingredients</legend><p>Tell us what you would like to include or avoid. We will review what works in a safe soap formula before quoting it.</p><div className="ingredient-choice-list">{ingredients.filter((item) => item.selectable).map((item) => <label className="ingredient-choice" key={item.id}><span><strong>{item.name}</strong><small>{item.purpose}</small></span><select aria-label={`${item.name} preference`} value={ingredientChoices[item.id] ?? ""} onChange={(event) => setIngredientChoices((current) => { const next = { ...current }; const choice = event.target.value as "prefer" | "avoid" | ""; if (choice) next[item.id] = choice; else delete next[item.id]; return next; })}><option value="">No preference</option><option value="prefer">Please include</option><option value="avoid">Please avoid</option></select></label>)}</div></fieldset>}
+        <div className="form-grid">
+          <div><label className="field-label" htmlFor="scent">Scent</label><Select value={scent} onValueChange={setScent}><SelectTrigger id="scent" className="shop-select"><SelectValue/></SelectTrigger><SelectContent>{shopContent.scents.map((item) => <SelectItem key={item.id} value={item.id}>{item.label}</SelectItem>)}</SelectContent></Select></div>
+          <div><label className="field-label" htmlFor="texture">Texture</label><Select value={texture} onValueChange={setTexture}><SelectTrigger id="texture" className="shop-select"><SelectValue/></SelectTrigger><SelectContent>{shopContent.textures.map((item) => <SelectItem key={item.id} value={item.id}>{item.label}</SelectItem>)}</SelectContent></Select></div>
+          <div><label className="field-label" htmlFor="quantity">Number of bars</label><Input id="quantity" className="form-input" type="number" min="1" max="24" required value={quantity} onChange={(event) => setQuantity(Number(event.target.value))}/></div>
+        </div>
+        <label className="field-label" htmlFor="notes">Ingredients to avoid or other requests</label>
+        <textarea id="notes" maxLength={1000} rows={3} placeholder="What would make this bar right for you?" value={notes} onChange={(event) => setNotes(event.target.value)}/>
+        <div className="water-nudge"><p>{hasWaterDetails ? "Your optional water details will be included in this request." : "If water changes how soap feels at your tap, you can tell us. No water test is needed to request a bar."}</p><a href="#water" onClick={() => setWaterOpen(true)}>{hasWaterDetails ? "Edit water details" : "Explore the optional water check"} <ArrowRight size={15}/></a></div>
+        <div className="consultation-option">
+          <label htmlFor="consultation"><input id="consultation" type="checkbox" checked={consultationRequested} onChange={(event) => setConsultationRequested(event.target.checked)}/><span><strong>I&apos;d like a soap consultation first</strong><small>Talk through ingredients, skin feel, and any water questions before we settle on a recipe.</small></span></label>
+          {consultationRequested && <div className="consultation-details"><label className="field-label" htmlFor="consultation-notes">What would you like to discuss? <span>Optional</span></label><textarea id="consultation-notes" maxLength={600} rows={3} placeholder="Questions about ingredients, skin feel, water, or anything else…" value={consultationNotes} onChange={(event) => setConsultationNotes(event.target.value)}/><p className="fine-print">We will use your email to arrange the conversation. No appointment is booked yet.</p></div>}
+        </div>
+        <div className="form-divider"/>
+        <div className="form-grid">
+          <div><label className="field-label" htmlFor="customer-name">Name</label><Input id="customer-name" className="form-input" autoComplete="name" minLength={2} maxLength={120} required value={customerName} onChange={(event) => setCustomerName(event.target.value)}/></div>
+          <div><label className="field-label" htmlFor="customer-email">Email</label><Input id="customer-email" className="form-input" type="email" autoComplete="email" required value={customerEmail} onChange={(event) => setCustomerEmail(event.target.value)}/></div>
+          <div><label className="field-label" htmlFor="delivery-zip">Delivery ZIP</label><Input id="delivery-zip" className="form-input" inputMode="numeric" pattern="[0-9]{5}" maxLength={5} required value={deliveryZip} onChange={(event) => setDeliveryZip(event.target.value.replace(/\D/g, ""))}/></div>
+        </div>
+        <div className="order-total"><span>Price and shipping <small>We will confirm the formula and total in your quote</small></span><strong>Quoted after review</strong></div>
+        <button className="button button-dark submit-button" type="submit" disabled={orderBusy}>{orderBusy ? "Saving…" : consultationRequested ? "Request consultation & bar" : "Request your bar"} <ArrowRight size={18}/></button>
+        <p className="fine-print">This is a request, not a purchase. No payment is collected.</p>
+        {orderError && <p className="status error" role="alert">{orderError}</p>}
+        {orderId && <div className="status success" role="status"><Check size={20}/><span>Request saved. Reference {orderId.slice(0, 8).toUpperCase()}. {savedConsultationRequested ? "Your consultation request is included. We will use your email to arrange the conversation and discuss the formula and quote." : "We will use your email to discuss the final formula and quote."} {emailNotification === "unavailable" && <>Our inbox notification is delayed. Please email your reference to <a href={`mailto:${shopContent.contactEmail}?subject=${encodeURIComponent(`Soap request ${orderId.slice(0, 8).toUpperCase()}`)}`}>{shopContent.contactEmail}</a> so we can follow up.</>}</span></div>}
+      </form>
+    </section>
     <section className="water-aside" id="water">
       <details className="water-disclosure" open={waterOpen} onToggle={(event) => setWaterOpen(event.currentTarget.open)}>
         <summary><span className="water-aside-kicker">OPTIONAL WATER CHECK</span><strong>Curious about your water?</strong><span className="water-aside-description">Hardness can change lather and rinse feel. Explore your tap water if you would like us to consider it.</span><span className="water-aside-action">{waterOpen ? "Hide water check" : "Explore water check"}</span></summary>
@@ -274,38 +299,5 @@ export default function Experience({ ingredients, soaps, checkoutReady }: { ingr
       </details>
     </section>
 
-    <section className="step-section request-section" id="request">
-      <div className="request-intro"><div className="step-heading"><span className="step-number">02</span><div><h2>Make it yours.</h2><p>Choose the details that matter to you. We will confirm the recipe and total before production.</p></div></div>
-        <div className="request-summary"><strong>{shopContent.product.name}</strong><span>Made to order · price quoted after review</span>{waterSource !== "unknown" && <span>Water: {waterSource === "public" ? "public utility" : waterSource === "private-well" ? "private well" : "home softened"}</span>}{(supplier || manualSupplier.trim()) && <span>Supplier: {supplier?.name ?? manualSupplier.trim()}</span>}{category && <span>Hardness reading: {category.toLowerCase()} · {hardness} mg/L</span>}</div>
-      </div>
-      <form className="order-form" onSubmit={submitOrder}>
-        <div className="form-trap" aria-hidden="true"><label htmlFor="company-website">Company website</label><input id="company-website" name="companyWebsite" tabIndex={-1} autoComplete="off"/></div>
-        {ingredients.some((item) => item.selectable) && <fieldset className="ingredient-choices"><legend>Choose your ingredients</legend><p>Tell us what you would like to include or avoid. We will review what works in a safe soap formula before quoting it.</p><div className="ingredient-choice-list">{ingredients.filter((item) => item.selectable).map((item) => <label className="ingredient-choice" key={item.id}><span><strong>{item.name}</strong><small>{item.purpose}</small></span><select aria-label={`${item.name} preference`} value={ingredientChoices[item.id] ?? ""} onChange={(event) => setIngredientChoices((current) => { const next = { ...current }; const choice = event.target.value as "prefer" | "avoid" | ""; if (choice) next[item.id] = choice; else delete next[item.id]; return next; })}><option value="">No preference</option><option value="prefer">Please include</option><option value="avoid">Please avoid</option></select></label>)}</div></fieldset>}
-        <div className="form-grid">
-          <div><label className="field-label" htmlFor="scent">Scent</label><Select value={scent} onValueChange={setScent}><SelectTrigger id="scent" className="shop-select"><SelectValue/></SelectTrigger><SelectContent>{shopContent.scents.map((item) => <SelectItem key={item.id} value={item.id}>{item.label}</SelectItem>)}</SelectContent></Select></div>
-          <div><label className="field-label" htmlFor="texture">Texture</label><Select value={texture} onValueChange={setTexture}><SelectTrigger id="texture" className="shop-select"><SelectValue/></SelectTrigger><SelectContent>{shopContent.textures.map((item) => <SelectItem key={item.id} value={item.id}>{item.label}</SelectItem>)}</SelectContent></Select></div>
-          <div><label className="field-label" htmlFor="quantity">Number of bars</label><Input id="quantity" className="form-input" type="number" min="1" max="24" required value={quantity} onChange={(event) => setQuantity(Number(event.target.value))}/></div>
-        </div>
-        <label className="field-label" htmlFor="notes">Ingredients to avoid or other requests</label>
-        <textarea id="notes" maxLength={1000} rows={3} placeholder="What would make this bar right for you?" value={notes} onChange={(event) => setNotes(event.target.value)}/>
-        <div className="water-nudge"><p>{hasWaterDetails ? "Your optional water details will be included in this request." : "If water changes how soap feels at your tap, you can tell us. No water test is needed to request a bar."}</p><a href="#water" onClick={() => setWaterOpen(true)}>{hasWaterDetails ? "Edit water details" : "Explore the optional water check"} <ArrowRight size={15}/></a></div>
-        <div className="consultation-option">
-          <label htmlFor="consultation"><input id="consultation" type="checkbox" checked={consultationRequested} onChange={(event) => setConsultationRequested(event.target.checked)}/><span><strong>I&apos;d like a soap consultation first</strong><small>Talk through ingredients, skin feel, and any water questions before we settle on a recipe.</small></span></label>
-          {consultationRequested && <div className="consultation-details"><label className="field-label" htmlFor="consultation-notes">What would you like to discuss? <span>Optional</span></label><textarea id="consultation-notes" maxLength={600} rows={3} placeholder="Questions about ingredients, skin feel, water, or anything else…" value={consultationNotes} onChange={(event) => setConsultationNotes(event.target.value)}/><p className="fine-print">We will use your email to arrange the conversation. No appointment is booked yet.</p></div>}
-        </div>
-        <div className="form-divider"/>
-        <div className="form-grid">
-          <div><label className="field-label" htmlFor="customer-name">Name</label><Input id="customer-name" className="form-input" autoComplete="name" minLength={2} maxLength={120} required value={customerName} onChange={(event) => setCustomerName(event.target.value)}/></div>
-          <div><label className="field-label" htmlFor="customer-email">Email</label><Input id="customer-email" className="form-input" type="email" autoComplete="email" required value={customerEmail} onChange={(event) => setCustomerEmail(event.target.value)}/></div>
-          <div><label className="field-label" htmlFor="delivery-zip">Delivery ZIP</label><Input id="delivery-zip" className="form-input" inputMode="numeric" pattern="[0-9]{5}" maxLength={5} required value={deliveryZip} onChange={(event) => setDeliveryZip(event.target.value.replace(/\D/g, ""))}/></div>
-        </div>
-        <div className="order-total"><span>Price and shipping <small>We will confirm the formula and total in your quote</small></span><strong>Quoted after review</strong></div>
-        <button className="button button-dark submit-button" type="submit" disabled={orderBusy}>{orderBusy ? "Saving…" : consultationRequested ? "Request consultation & bar" : "Request your bar"} <ArrowRight size={18}/></button>
-        <p className="fine-print">This is a request, not a purchase. No payment is collected.</p>
-        {orderError && <p className="status error" role="alert">{orderError}</p>}
-        {orderId && <div className="status success" role="status"><Check size={20}/><span>Request saved. Reference {orderId.slice(0, 8).toUpperCase()}. {savedConsultationRequested ? "Your consultation request is included. We will use your email to arrange the conversation and discuss the formula and quote." : "We will use your email to discuss the final formula and quote."} {emailNotification === "unavailable" && <>Our inbox notification is delayed. Please email your reference to <a href={`mailto:${shopContent.contactEmail}?subject=${encodeURIComponent(`Soap request ${orderId.slice(0, 8).toUpperCase()}`)}`}>{shopContent.contactEmail}</a> so we can follow up.</>}</span></div>}
-      </form>
-    </section>
-    <footer className="site-footer"><strong>{shopContent.name}</strong><span>Handmade soap, made for you.</span><nav aria-label="Footer"><a href="#water">Water check</a><a href={`mailto:${shopContent.contactEmail}`}>Contact</a><a href="/privacy">Privacy</a></nav></footer>
   </>;
 }

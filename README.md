@@ -2,6 +2,8 @@
 
 US-first storefront for made-to-order natural soap and finished batches. Custom bars remain reviewed quotes: customers can choose ingredients they prefer or wish to avoid, and can optionally describe their water or request a consultation. The owner can manage ingredients and ready-made soaps at `/studio`. Finished batches can use Stripe-hosted Checkout after payment setup; card details never enter this Site.
 
+The public site has four routes: `/` introduces the choices, `/shop` lists available finished batches (or an empty state), `/custom` holds the quote form and optional water check, and `/ingredients` explains the current starting formula. The shared navigation links to each page. The studio controls the ingredient and ready-made listings shown on these pages.
+
 ## Edit the storefront
 
 Change the business name, headline, scent, and texture choices in [lib/shop-content.ts](lib/shop-content.ts). The starting price is zero until you set a real price; custom requests are quoted after review. The product ID is an internal database value; leave it as `custom-bar` unless you also plan to migrate existing orders.
