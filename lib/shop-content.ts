@@ -7,7 +7,8 @@ export const shopContent = {
   product: {
     id: "custom-bar",
     name: "Your custom bar",
-    startingPriceCents: 1200,
+    // Set a real price in cents when ready. Zero keeps this a quote-only request site.
+    startingPriceCents: 0,
     ingredients: [
       { name: "Olive oil", purpose: "A gentle, creamy base" },
       { name: "Coconut oil", purpose: "Helps create lather" },

@@ -24,6 +24,12 @@ test("owner notice includes the request details needed to reply", () => {
   }
 });
 
+test("quote-only requests do not imply an example price", () => {
+  const body = formatOrderNotification(order, "abc-123", 0);
+  assert.match(body, /Price: quote after reviewing the request/);
+  assert.doesNotMatch(body, /\$0\.00/);
+});
+
 test("email is sent to both configured inboxes with a stable request key", async () => {
   let call;
   const transport = async (url, options) => {

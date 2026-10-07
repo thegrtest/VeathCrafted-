@@ -264,7 +264,7 @@ export default function Experience() {
 
     <section className="step-section request-section" id="request">
       <div className="request-intro"><div className="step-heading"><span className="step-number">03</span><div><h2>Make it yours.</h2><p>Tell us what you like and what to avoid. We will confirm the recipe and total with you before production.</p></div></div>
-        <div className="request-summary"><strong>{shopContent.product.name}</strong><span>Made to order · starting at ${(shopContent.product.startingPriceCents / 100).toFixed(0)} per bar</span><span>At your tap: {waterSource === "public" ? "public utility" : waterSource === "private-well" ? "private well" : waterSource === "softened" ? "home softened" : "not sure"}</span>{(supplier || manualSupplier.trim()) && <span>Supplier: {supplier?.name ?? manualSupplier.trim()}</span>}{category && <span>Hardness reading: {category.toLowerCase()} · {hardness} mg/L</span>}</div>
+        <div className="request-summary"><strong>{shopContent.product.name}</strong><span>Made to order · price quoted after review</span><span>At your tap: {waterSource === "public" ? "public utility" : waterSource === "private-well" ? "private well" : waterSource === "softened" ? "home softened" : "not sure"}</span>{(supplier || manualSupplier.trim()) && <span>Supplier: {supplier?.name ?? manualSupplier.trim()}</span>}{category && <span>Hardness reading: {category.toLowerCase()} · {hardness} mg/L</span>}</div>
       </div>
       <form className="order-form" onSubmit={submitOrder}>
         <div className="form-trap" aria-hidden="true"><label htmlFor="company-website">Company website</label><input id="company-website" name="companyWebsite" tabIndex={-1} autoComplete="off"/></div>
@@ -285,7 +285,7 @@ export default function Experience() {
           <div><label className="field-label" htmlFor="customer-email">Email</label><Input id="customer-email" className="form-input" type="email" autoComplete="email" required value={customerEmail} onChange={(event) => setCustomerEmail(event.target.value)}/></div>
           <div><label className="field-label" htmlFor="delivery-zip">Delivery ZIP</label><Input id="delivery-zip" className="form-input" inputMode="numeric" pattern="[0-9]{5}" maxLength={5} required value={deliveryZip} onChange={(event) => setDeliveryZip(event.target.value.replace(/\D/g, ""))}/></div>
         </div>
-        <div className="order-total"><span>Starting bars estimate <small>Shipping and custom changes confirmed in your quote</small></span><strong>${((shopContent.product.startingPriceCents * (Number.isFinite(quantity) ? quantity : 0)) / 100).toFixed(2)}</strong></div>
+        <div className="order-total"><span>Price and shipping <small>We will confirm the formula and total in your quote</small></span><strong>Quoted after review</strong></div>
         <button className="button button-dark submit-button" type="submit" disabled={orderBusy}>{orderBusy ? "Saving…" : consultationRequested ? "Request consultation & bar" : "Request your bar"} <ArrowRight size={18}/></button>
         <p className="fine-print">This is a request, not a purchase. No payment is collected.</p>
         {orderError && <p className="status error" role="alert">{orderError}</p>}

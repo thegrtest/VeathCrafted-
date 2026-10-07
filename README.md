@@ -4,7 +4,7 @@ US-first request site for made-to-order natural soap. The page follows one path:
 
 ## Edit the storefront
 
-Change the business name, headline, ingredient list, scent and texture choices, and starting price in [lib/shop-content.ts](lib/shop-content.ts). The page and order API use this same file, so the displayed price and saved estimate stay aligned. The product ID is an internal database value; leave it as `custom-bar` unless you also plan to migrate existing orders.
+Change the business name, headline, ingredient list, scent and texture choices in [lib/shop-content.ts](lib/shop-content.ts). The starting price is zero until you set a real price; the public page quotes each request after review. The product ID is an internal database value; leave it as `custom-bar` unless you also plan to migrate existing orders.
 
 The listed ingredients are an example starting formula. Replace them with your real recipe when it is ready. The page says that exact amounts and the final ingredient list are confirmed before production. The public contact address is `shopContent.contactEmail` in `lib/shop-content.ts`. The owner inbox recipients are server-side configuration, so the second inbox is not shown to customers.
 

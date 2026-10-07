@@ -30,7 +30,7 @@ export function formatOrderNotification(order: OrderNotification, id: string, es
     `Reply to: ${order.customerEmail}`,
     `Delivery ZIP: ${order.deliveryZip}`,
     `Bars: ${order.quantity}`,
-    `Starting estimate: $${(estimatedTotalCents / 100).toFixed(2)} (before shipping or custom changes)`,
+    estimatedTotalCents > 0 ? `Starting estimate: $${(estimatedTotalCents / 100).toFixed(2)} (before shipping or custom changes)` : "Price: quote after reviewing the request",
     `Scent: ${order.scent}`,
     `Texture: ${order.texture}`,
     "",
