@@ -2,8 +2,8 @@
 export const shopContent = {
   name: "Veath Crafted",
   contactEmail: "cveath@icloud.com",
-  headline: "Soap tailored to you, down to the water.",
-  introduction: "Tell us about your water and the ingredients you want. We make your bar to order and share the final formula before production.",
+  headline: "Handmade soap, made for you.",
+  introduction: "Tell us the ingredients, scent, and feel you prefer. We make each bar to order and share the final formula before production.",
   product: {
     id: "custom-bar",
     name: "Your custom bar",

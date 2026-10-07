@@ -1,6 +1,6 @@
 # Veath Crafted
 
-US-first request site for made-to-order natural soap. The page follows one path: describe the water at your tap, see every starting ingredient, then request a custom bar. Customers can also request a soap consultation before the recipe is finalized. The storefront does **not** collect payment or book appointments. It saves requests in D1 and, once email is configured, asks Resend to send an owner notification.
+US-first request site for made-to-order natural soap. The page leads with ingredients and personal preferences, then invites customers to request a custom bar. An optional water check provides supplier, hardness, and washing context for customers who want it. Customers can also request a soap consultation before the recipe is finalized. The storefront does **not** collect payment or book appointments. It saves requests in D1 and asks Resend to send an owner notification.
 
 ## Edit the storefront
 

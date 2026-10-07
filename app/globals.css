@@ -83,6 +83,16 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
 .step-number { flex: none; color: #9a7245; font-size: .9rem; font-weight: 800; letter-spacing: .08em; padding-top: .55rem; }
 .step-heading h2 { font-size: clamp(2.4rem, 4vw, 4rem); line-height: 1.1; margin: 0 0 .6rem; }
 .step-heading p { color: #4b6469; max-width: 700px; line-height: 1.7; margin: 0; }
+.water-aside { padding: 1.5rem clamp(1.25rem, 6vw, 7rem); }
+.water-disclosure { max-width: 920px; margin: auto; border: 1px solid #d4dfd9; background: #fff; }
+.water-disclosure > summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .3rem 1.5rem; align-items: center; padding: 1.35rem clamp(1.25rem, 3vw, 2rem); list-style: none; cursor: pointer; }
+.water-disclosure > summary::-webkit-details-marker { display: none; }
+.water-disclosure > summary:focus-visible { outline: 2px solid #246a77; outline-offset: 3px; }
+.water-aside-kicker { grid-column: 1 / -1; color: #8a6b43; font-size: .7rem; font-weight: 800; letter-spacing: .12em; }
+.water-disclosure summary strong { grid-column: 1; font: 1.5rem Georgia, "Times New Roman", serif; letter-spacing: -.025em; }
+.water-aside-description { grid-column: 1; color: #526a70; font-size: .88rem; line-height: 1.55; }
+.water-aside-action { grid-column: 2; grid-row: 2 / 4; color: #205a64; font-size: .84rem; font-weight: 700; white-space: nowrap; }
+.water-disclosure-body { padding: 1.5rem clamp(1.25rem, 3vw, 2rem) 1.75rem; border-top: 1px solid #dce5e0; }
 .water-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 920px; margin: auto; }
 .panel { min-width: 0; background: #fff; border: 1px solid #dce4e0; padding: clamp(1.5rem, 3vw, 2.5rem); }
 .panel-tint { background: #eaf1ee; border-color: #dbe6e2; }
@@ -122,14 +132,14 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
 .water-help { margin: .7rem 0 0; }
 .water-help a { text-decoration: underline; }
 .water-report-link { margin-top: 1.1rem; }
-.water-profile { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 920px; margin: 1rem auto 0; padding: clamp(1.5rem, 3vw, 2.3rem); background: #173d46; color: #fff; }
-.profile-kicker { color: #e9c990; font-size: .73rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.water-profile { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 920px; margin: 1rem auto 0; padding: clamp(1.5rem, 3vw, 2.3rem); background: #eaf1ee; color: #18343c; }
+.profile-kicker { color: #7e643f; font-size: .73rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .water-profile h3 { margin: .35rem 0 .75rem; font-size: 1.8rem; }
-.water-profile p { margin: 0; color: #d6e4e2; font-size: .88rem; line-height: 1.6; }
+.water-profile p { margin: 0; color: #526a70; font-size: .88rem; line-height: 1.6; }
 .water-feel strong { display: block; margin-bottom: .25rem; font-size: .9rem; }
 .water-feel p { margin-bottom: .8rem; font-size: .8rem; }
 .water-feel label { display: flex; align-items: flex-start; gap: .6rem; margin: .55rem 0; font-size: .85rem; cursor: pointer; }
-.water-feel input { flex: none; width: 17px; height: 17px; margin: .12rem 0 0; accent-color: #e9c990; }
+.water-feel input { flex: none; width: 17px; height: 17px; margin: .12rem 0 0; accent-color: #246a77; }
 .water-note { margin: 1rem 0 .6rem !important; font-size: .87rem !important; line-height: 1.55; }
 .inline-link { display: inline-flex; align-items: center; gap: .35rem; color: #205a64; font-size: .86rem; font-weight: 700; }
 .source-note { max-width: 920px; margin: 1rem auto 0; color: #627679; font-size: .78rem; line-height: 1.6; }
@@ -156,6 +166,9 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
 .shop-select { height: 50px !important; width: 100% !important; border-radius: 2px !important; background: #fff !important; font-size: .94rem !important; }
 .order-form textarea { display: block; width: 100%; resize: vertical; padding: .75rem .8rem; border: 1px solid #b8c8c4; border-radius: 2px; background: #fff; outline: none; font-size: .94rem; }
 .order-form textarea:focus { border-color: #246a77; }
+.water-nudge { margin-top: 1.15rem; padding: .8rem 1rem; border-left: 3px solid #b7d0c5; background: #f5f8f5; font-size: .82rem; }
+.water-nudge p { margin: 0 0 .35rem; color: #526a70; line-height: 1.5; }
+.water-nudge a { display: inline-flex; align-items: center; gap: .25rem; color: #205a64; font-weight: 700; }
 .consultation-option { margin-top: 1.25rem; padding: 1rem 1.1rem; border: 1px solid #cddad5; background: #f3f7f4; }
 .consultation-option > label { display: flex; align-items: flex-start; gap: .8rem; cursor: pointer; }
 .consultation-option input[type="checkbox"] { width: 19px; height: 19px; flex: none; margin: .15rem 0 0; accent-color: #173d46; }
@@ -201,6 +214,8 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
   .hardness-result { display: block; }
   .hardness-result span { display: block; margin-top: .2rem; }
   .hardness-input-row { grid-template-columns: 1fr; }
+  .water-disclosure > summary { grid-template-columns: 1fr; }
+  .water-aside-action { grid-column: 1; grid-row: auto; margin-top: .25rem; }
   .site-footer { display: block; }
   .site-footer span { display: block; margin-top: .4rem; }
   .site-footer nav { margin-top: .7rem; }

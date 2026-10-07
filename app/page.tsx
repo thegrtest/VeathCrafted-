@@ -9,7 +9,6 @@ export default function Home() {
         <span className="brand-mark">V</span><span>{shopContent.name}</span>
       </a>
       <nav aria-label="Main navigation">
-        <a href="#water">Your water</a>
         <a href="#ingredients">Ingredients</a>
         <a href="#request">Request a bar</a>
       </nav>
@@ -26,7 +25,7 @@ export default function Home() {
       <div className="hero-image" role="img" aria-label="Hand-cut handmade soap bars"/>
     </section>
     <div className="ingredient-peek">
-      <strong>In the starting bar</strong>
+      <strong>A starting point, fully explained</strong>
       <span>{shopContent.product.ingredients.map((item) => item.name).join(" · ")}</span>
       <a href="#ingredients">What each one does <ArrowRight size={16}/></a>
     </div>

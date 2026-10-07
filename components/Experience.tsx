@@ -43,6 +43,7 @@ export default function Experience() {
   const [readingSource, setReadingSource] = useState<ReadingSource>("unsure");
   const [waterFeel, setWaterFeel] = useState<string[]>([]);
   const [waterSource, setWaterSource] = useState<WaterSource>("unknown");
+  const [waterOpen, setWaterOpen] = useState(false);
   const [scent, setScent] = useState<string>(shopContent.scents[0].id);
   const [texture, setTexture] = useState<string>(shopContent.textures[0].id);
   const [quantity, setQuantity] = useState(2);
@@ -63,6 +64,7 @@ export default function Experience() {
     ? Math.round(reading * (hardnessUnit === "gpg" ? 17.1 : 1)) : null;
   const readingIsValid = hardnessText === "" || (reading !== null && Number.isFinite(reading) && reading >= 0 && reading <= (hardnessUnit === "gpg" ? 58 : 1000));
   const category = readingIsValid && hardness !== null ? hardnessCategory(hardness) : null;
+  const hasWaterDetails = waterSource !== "unknown" || Boolean(supplier || manualSupplier.trim() || category || waterFeel.length);
   const latherNote = waterSource === "softened"
     ? "Home softening can change the water after your utility measures it. If your reading is from before the softener, test the tap you use when washing."
     : category === "Hard" || category === "Very hard"
@@ -192,8 +194,16 @@ export default function Experience() {
   }
 
   return <>
-    <section className="step-section" id="water">
-      <div className="step-heading"><span className="step-number">01</span><div><h2>Start with your water.</h2><p>Tell us what reaches your tap. A supplier match gives context; your own hardness reading and washing experience help us discuss the right bar.</p></div></div>
+    <section className="step-section ingredients-section" id="ingredients">
+      <div className="step-heading"><span className="step-number">01</span><div><h2>Know every ingredient.</h2><p>Here is our starting bar and what each ingredient does. Tell us what you prefer or need to avoid; we will share the final ingredient list and amounts before making it.</p></div></div>
+      <div className="ingredient-list" role="list">{shopContent.product.ingredients.map((ingredient) => <div className="ingredient-row" role="listitem" key={ingredient.name}><strong>{ingredient.name}</strong><span>{ingredient.purpose}</span></div>)}</div>
+      <p className="ingredient-footnote">Your scent, texture, and other requests may change this starting formula. Sodium hydroxide is used during soapmaking.</p>
+    </section>
+
+    <section className="water-aside" id="water">
+      <details className="water-disclosure" open={waterOpen} onToggle={(event) => setWaterOpen(event.currentTarget.open)}>
+        <summary><span className="water-aside-kicker">OPTIONAL WATER CHECK</span><strong>Curious about your water?</strong><span className="water-aside-description">Hardness can change lather and rinse feel. Explore your tap water if you would like us to consider it.</span><span className="water-aside-action">{waterOpen ? "Hide water check" : "Explore water check"}</span></summary>
+        <div className="water-disclosure-body">
       <div className="water-grid">
         <div className="panel">
           <h3>Find a possible supplier</h3>
@@ -254,17 +264,13 @@ export default function Experience() {
       </div>
       <div className="water-profile" aria-live="polite"><div><span className="profile-kicker">Your water profile</span><h3>{category ? `${category} ${readingSource === "tap-test" ? "at your tap" : readingSource === "utility-report" ? "utility reading" : "hardness reading"}` : waterSource === "softened" ? "Home softened water" : "A little more to learn"}</h3><p>{latherNote}</p></div><div className="water-feel"><strong>What do you notice when washing?</strong><p>Choose any that apply. Your experience helps us discuss the recipe.</p>{waterFeelOptions.map((item) => <label key={item.id}><input type="checkbox" checked={waterFeel.includes(item.id)} onChange={(event) => setWaterFeel((current) => event.target.checked ? [...current, item.id] : current.filter((id) => id !== item.id))}/>{item.label}</label>)}</div></div>
       <p className="source-note">Supplier candidates come from <a href="https://www.epa.gov/ground-water-and-drinking-water/public-water-system-service-areas" target="_blank" rel="noreferrer">EPA service-area data</a>; public system details from <a href="https://echo.epa.gov/tools/web-services/facility-search-drinking-water" target="_blank" rel="noreferrer">EPA ECHO</a>. Hardness ranges and soap behavior follow <a href="https://www.usgs.gov/water-science-school/science/hardness-water" target="_blank" rel="noreferrer">USGS guidance</a>. One grain per gallon is about 17.1 mg/L as CaCO₃. Supplier and ZIP matches do not measure your tap water.</p>
-    </section>
-
-    <section className="step-section ingredients-section" id="ingredients">
-      <div className="step-heading"><span className="step-number">02</span><div><h2>Know every ingredient.</h2><p>This simple starting bar can change to fit your preferences and water. We will share exact amounts and the final ingredient list before making it.</p></div></div>
-      <div className="ingredient-list" role="list">{shopContent.product.ingredients.map((ingredient) => <div className="ingredient-row" role="listitem" key={ingredient.name}><strong>{ingredient.name}</strong><span>{ingredient.purpose}</span></div>)}</div>
-      <p className="ingredient-footnote">Scent, texture, and any agreed water adjustments may add or change ingredients. Sodium hydroxide is used during soapmaking.</p>
+        </div>
+      </details>
     </section>
 
     <section className="step-section request-section" id="request">
-      <div className="request-intro"><div className="step-heading"><span className="step-number">03</span><div><h2>Make it yours.</h2><p>Tell us what you like and what to avoid. We will confirm the recipe and total with you before production.</p></div></div>
-        <div className="request-summary"><strong>{shopContent.product.name}</strong><span>Made to order · price quoted after review</span><span>At your tap: {waterSource === "public" ? "public utility" : waterSource === "private-well" ? "private well" : waterSource === "softened" ? "home softened" : "not sure"}</span>{(supplier || manualSupplier.trim()) && <span>Supplier: {supplier?.name ?? manualSupplier.trim()}</span>}{category && <span>Hardness reading: {category.toLowerCase()} · {hardness} mg/L</span>}</div>
+      <div className="request-intro"><div className="step-heading"><span className="step-number">02</span><div><h2>Make it yours.</h2><p>Choose the details that matter to you. We will confirm the recipe and total before production.</p></div></div>
+        <div className="request-summary"><strong>{shopContent.product.name}</strong><span>Made to order · price quoted after review</span>{waterSource !== "unknown" && <span>Water: {waterSource === "public" ? "public utility" : waterSource === "private-well" ? "private well" : "home softened"}</span>}{(supplier || manualSupplier.trim()) && <span>Supplier: {supplier?.name ?? manualSupplier.trim()}</span>}{category && <span>Hardness reading: {category.toLowerCase()} · {hardness} mg/L</span>}</div>
       </div>
       <form className="order-form" onSubmit={submitOrder}>
         <div className="form-trap" aria-hidden="true"><label htmlFor="company-website">Company website</label><input id="company-website" name="companyWebsite" tabIndex={-1} autoComplete="off"/></div>
@@ -275,9 +281,10 @@ export default function Experience() {
         </div>
         <label className="field-label" htmlFor="notes">Ingredients to avoid or other requests</label>
         <textarea id="notes" maxLength={1000} rows={3} placeholder="What would make this bar right for you?" value={notes} onChange={(event) => setNotes(event.target.value)}/>
+        <div className="water-nudge"><p>{hasWaterDetails ? "Your optional water details will be included in this request." : "If water changes how soap feels at your tap, you can tell us. No water test is needed to request a bar."}</p><a href="#water" onClick={() => setWaterOpen(true)}>{hasWaterDetails ? "Edit water details" : "Explore the optional water check"} <ArrowRight size={15}/></a></div>
         <div className="consultation-option">
-          <label htmlFor="consultation"><input id="consultation" type="checkbox" checked={consultationRequested} onChange={(event) => setConsultationRequested(event.target.checked)}/><span><strong>I&apos;d like a soap consultation first</strong><small>Talk through your water, ingredients, and preferences before we settle on a recipe.</small></span></label>
-          {consultationRequested && <div className="consultation-details"><label className="field-label" htmlFor="consultation-notes">What would you like to discuss? <span>Optional</span></label><textarea id="consultation-notes" maxLength={600} rows={3} placeholder="Questions about water, ingredients, skin feel, or anything else…" value={consultationNotes} onChange={(event) => setConsultationNotes(event.target.value)}/><p className="fine-print">We will use your email to arrange the conversation. No appointment is booked yet.</p></div>}
+          <label htmlFor="consultation"><input id="consultation" type="checkbox" checked={consultationRequested} onChange={(event) => setConsultationRequested(event.target.checked)}/><span><strong>I&apos;d like a soap consultation first</strong><small>Talk through ingredients, skin feel, and any water questions before we settle on a recipe.</small></span></label>
+          {consultationRequested && <div className="consultation-details"><label className="field-label" htmlFor="consultation-notes">What would you like to discuss? <span>Optional</span></label><textarea id="consultation-notes" maxLength={600} rows={3} placeholder="Questions about ingredients, skin feel, water, or anything else…" value={consultationNotes} onChange={(event) => setConsultationNotes(event.target.value)}/><p className="fine-print">We will use your email to arrange the conversation. No appointment is booked yet.</p></div>}
         </div>
         <div className="form-divider"/>
         <div className="form-grid">
@@ -292,6 +299,6 @@ export default function Experience() {
         {orderId && <div className="status success" role="status"><Check size={20}/><span>Request saved. Reference {orderId.slice(0, 8).toUpperCase()}. {savedConsultationRequested ? "Your consultation request is included. We will use your email to arrange the conversation and discuss the formula and quote." : "We will use your email to discuss the final formula and quote."} {emailNotification === "unavailable" && <>Our inbox notification is delayed. Please email your reference to <a href={`mailto:${shopContent.contactEmail}?subject=${encodeURIComponent(`Soap request ${orderId.slice(0, 8).toUpperCase()}`)}`}>{shopContent.contactEmail}</a> so we can follow up.</>}</span></div>}
       </form>
     </section>
-    <footer className="site-footer"><strong>{shopContent.name}</strong><span>Soap tailored to you, down to the water.</span><nav aria-label="Footer"><a href={`mailto:${shopContent.contactEmail}`}>Contact</a><a href="/privacy">Privacy</a></nav></footer>
+    <footer className="site-footer"><strong>{shopContent.name}</strong><span>Handmade soap, made for you.</span><nav aria-label="Footer"><a href="#water">Water check</a><a href={`mailto:${shopContent.contactEmail}`}>Contact</a><a href="/privacy">Privacy</a></nav></footer>
   </>;
 }
