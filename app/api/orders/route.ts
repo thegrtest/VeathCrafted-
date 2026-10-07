@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { z } from "zod";
 import { shopContent } from "@/lib/shop-content";
+import { sendOrderNotification } from "@/lib/order-notification";
 
 const orderSchema = z.object({
   customerName: z.string().trim().min(2).max(120),
@@ -34,7 +35,12 @@ export async function POST(request: Request) {
         order.base, order.scent, order.texture, order.quantity, order.hardness, order.waterSupplier,
         order.waterSource, order.notes, order.consultationRequested ? 1 : 0,
         order.consultationRequested ? order.consultationNotes : "", estimatedTotalCents).run();
-    return Response.json({ id, estimatedTotalCents, status: "requested" }, { status: 201 });
+    const emailNotification = await sendOrderNotification({
+      apiKey: env.RESEND_API_KEY,
+      from: env.ORDER_EMAIL_FROM,
+      to: env.ORDER_EMAIL_TO,
+    }, order, id, estimatedTotalCents);
+    return Response.json({ id, estimatedTotalCents, status: "requested", emailNotification }, { status: 201 });
   } catch (error) {
     console.error("Could not save order request", error);
     return Response.json({ error: "We could not save your request. Your details are still in the form; please try again." }, { status: 503 });

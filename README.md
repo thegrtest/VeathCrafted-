@@ -1,12 +1,24 @@
 # Veath Crafted
 
-US-first request site for made-to-order natural soap. The page follows one path: describe the water at your tap, see every starting ingredient, then request a custom bar. Customers can also request a soap consultation before the recipe is finalized. The storefront does **not** collect payment, send email, or book appointments.
+US-first request site for made-to-order natural soap. The page follows one path: describe the water at your tap, see every starting ingredient, then request a custom bar. Customers can also request a soap consultation before the recipe is finalized. The storefront does **not** collect payment or book appointments. It saves requests in D1 and, once email is configured, asks Resend to send an owner notification.
 
 ## Edit the storefront
 
 Change the business name, headline, ingredient list, scent and texture choices, and starting price in [lib/shop-content.ts](lib/shop-content.ts). The page and order API use this same file, so the displayed price and saved estimate stay aligned. The product ID is an internal database value; leave it as `custom-bar` unless you also plan to migrate existing orders.
 
-The listed ingredients are an example starting formula. Replace them with your real recipe when it is ready. The page says that exact amounts and the final ingredient list are confirmed before production. The temporary public contact address and privacy page text are in `components/Experience.tsx` and `app/privacy/page.tsx`.
+The listed ingredients are an example starting formula. Replace them with your real recipe when it is ready. The page says that exact amounts and the final ingredient list are confirmed before production. The public contact address is `shopContent.contactEmail` in `lib/shop-content.ts`. The owner inbox recipients are server-side configuration, so the second inbox is not shown to customers.
+
+## Request email
+
+The Site uses Resend for owner notifications. Set the following **server-only runtime values** through Sites; never put a key in source or a browser bundle:
+
+- `RESEND_API_KEY` — secret API key with sending permission.
+- `ORDER_EMAIL_FROM` — a sender on a domain verified for sending in the same Resend account, such as `Veath Crafted <orders@veathcrafted.com>` **after** that domain is verified. The iCloud contact address is a recipient and reply contact, not an authenticated sender for a domain the business controls.
+- `ORDER_EMAIL_TO` — comma-separated inboxes: `cveath@icloud.com,daughertybrad56@gmail.com` for the current trial.
+
+Resend accepts one plain-text message addressed to both owner inboxes, with the customer's email as `reply_to`. It includes the reference, customer and delivery details, ingredient preferences, water details, consultation notes, and starting estimate. Its idempotency key is derived from the stored request ID. **An accepted API call is not proof of inbox delivery**; check both inboxes and provider delivery events with a real test request.
+
+The order is saved before the notification is attempted. If email is missing or rejected, the API still returns the saved reference and the form directs the customer to email that reference to the public contact address. The saved request remains in D1 for manual recovery. This initial implementation does not automatically retry failed mail or email the customer.
 
 ## Run locally
 
@@ -39,8 +51,8 @@ node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1
 
 ## Before accepting paid orders
 
-Replace the working brand, example ingredient list, and starting price with the actual business details. Specify bar size, production lead time, shipping rules, final formula disclosures, and any ingredient/allergen notices. Add an authenticated owner view or private order notifications, payment checkout, spam protection, and a privacy policy before public launch. The current order flow is a quote request saved to D1, so no order is charged or automatically emailed.
+Replace the example ingredient list and starting price with the actual business details. Specify bar size, production lead time, shipping rules, final formula disclosures, and any ingredient/allergen notices. Configure and test the email sender and both inboxes. Add an authenticated owner view, payment checkout, and stronger spam protection before scaling sales. The current order flow remains a quote request saved to D1; no order is charged.
 
 The app uses Vinext with a Cloudflare-compatible D1 binding named `DB`. `.openai/hosting.json` records that binding for a later Sites deployment.
 
-`GET /api/health` checks the D1 binding and returns `{ "ok": true, "database": "ok" }` when order storage is available. It exposes no order details.
+`GET /api/health` checks the D1 binding and reports `emailNotifications: "configured"` only when all three mail settings are present. That field confirms configuration is present, not that Resend has verified the domain or delivered an email. It exposes no order details or secrets.

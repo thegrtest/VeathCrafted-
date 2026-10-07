@@ -55,6 +55,7 @@ export default function Experience() {
   const [orderBusy, setOrderBusy] = useState(false);
   const [orderError, setOrderError] = useState("");
   const [orderId, setOrderId] = useState("");
+  const [emailNotification, setEmailNotification] = useState<"accepted" | "unavailable" | null>(null);
   const [savedConsultationRequested, setSavedConsultationRequested] = useState(false);
 
   const reading = hardnessText === "" ? null : Number(hardnessText);
@@ -160,7 +161,7 @@ export default function Experience() {
   }
 
   async function submitOrder(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setOrderBusy(true); setOrderError(""); setOrderId("");
+    event.preventDefault(); setOrderBusy(true); setOrderError(""); setOrderId(""); setEmailNotification(null);
     if (!readingIsValid) { setOrderError("Review your hardness reading before sending the request."); setOrderBusy(false); return; }
     try {
       const website = new FormData(event.currentTarget).get("companyWebsite")?.toString() ?? "";
@@ -178,9 +179,10 @@ export default function Experience() {
           notes: [waterDetails, notes.trim()].filter(Boolean).join("\n"),
           consultationRequested, consultationNotes: consultationRequested ? consultationNotes : "", website,
         }) });
-      const data = await response.json() as { id?: string; error?: string };
+      const data = await response.json() as { id?: string; error?: string; emailNotification?: "accepted" | "unavailable" };
       if (!response.ok) throw new Error(data.error ?? "We could not save your request.");
       setOrderId(data.id ?? "");
+      setEmailNotification(data.emailNotification ?? "unavailable");
       setSavedConsultationRequested(consultationRequested);
     } catch (error) {
       setOrderError(error instanceof Error ? error.message : "We could not save your request.");
@@ -287,9 +289,9 @@ export default function Experience() {
         <button className="button button-dark submit-button" type="submit" disabled={orderBusy}>{orderBusy ? "Saving…" : consultationRequested ? "Request consultation & bar" : "Request your bar"} <ArrowRight size={18}/></button>
         <p className="fine-print">This is a request, not a purchase. No payment is collected.</p>
         {orderError && <p className="status error" role="alert">{orderError}</p>}
-        {orderId && <div className="status success" role="status"><Check size={20}/><span>Request saved. Reference {orderId.slice(0, 8).toUpperCase()}. {savedConsultationRequested ? "Your consultation request is included. We will use your email to arrange the conversation and discuss the formula and quote." : "We will use your email to discuss the final formula and quote."}</span></div>}
+        {orderId && <div className="status success" role="status"><Check size={20}/><span>Request saved. Reference {orderId.slice(0, 8).toUpperCase()}. {savedConsultationRequested ? "Your consultation request is included. We will use your email to arrange the conversation and discuss the formula and quote." : "We will use your email to discuss the final formula and quote."} {emailNotification === "unavailable" && <>Our inbox notification is delayed. Please email your reference to <a href={`mailto:${shopContent.contactEmail}?subject=${encodeURIComponent(`Soap request ${orderId.slice(0, 8).toUpperCase()}`)}`}>{shopContent.contactEmail}</a> so we can follow up.</>}</span></div>}
       </form>
     </section>
-    <footer className="site-footer"><strong>{shopContent.name}</strong><span>Soap tailored to you, down to the water.</span><nav aria-label="Footer"><a href="mailto:daughertybrad56@gmail.com">Contact</a><a href="/privacy">Privacy</a></nav></footer>
+    <footer className="site-footer"><strong>{shopContent.name}</strong><span>Soap tailored to you, down to the water.</span><nav aria-label="Footer"><a href={`mailto:${shopContent.contactEmail}`}>Contact</a><a href="/privacy">Privacy</a></nav></footer>
   </>;
 }

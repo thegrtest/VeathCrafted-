@@ -1,6 +1,7 @@
 // Edit this file to change the storefront's name, copy, ingredients, and price.
 export const shopContent = {
   name: "Veath Crafted",
+  contactEmail: "cveath@icloud.com",
   headline: "Soap tailored to you, down to the water.",
   introduction: "Tell us about your water and the ingredients you want. We make your bar to order and share the final formula before production.",
   product: {

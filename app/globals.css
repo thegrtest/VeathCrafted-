@@ -137,6 +137,7 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; l
 .status { display: flex; align-items: flex-start; gap: .7rem; margin: 1rem 0 0; padding: .85rem 1rem; font-size: .86rem; line-height: 1.5; }
 .error { background: #f9e9e5; color: #7f332f; }
 .success { background: #e4f2e9; color: #205645; }
+.success a { color: inherit; font-weight: 700; text-decoration: underline; }
 
 .ingredients-section { background: #eaf0ed; }
 .ingredient-list { max-width: 920px; margin: auto; background: #fff; border-top: 1px solid #cbdad4; }
