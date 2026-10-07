@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { formatOrderNotification, sendOrderNotification } from "../lib/order-notification.ts";
+import { formatOrderNotification, formatOrderNotificationHtml, sendOrderNotification } from "../lib/order-notification.ts";
 
 const order = {
   customerName: "Sample Customer",
@@ -50,6 +50,15 @@ test("email is sent to both configured inboxes with a stable request key", async
   assert.deepEqual(payload.to, ["cveath@icloud.com", "daughertybrad56@gmail.com"]);
   assert.equal(payload.reply_to, "customer@example.com");
   assert.match(payload.subject, /Consultation/);
+  assert.match(payload.text, /NEXT STEP: Reply to this email/);
+  assert.match(payload.html, /A new consultation request/);
+  assert.match(payload.html, /Discuss harder water/);
+});
+
+test("HTML notification escapes customer supplied content", () => {
+  const html = formatOrderNotificationHtml({ ...order, notes: '<img src=x onerror="alert(1)">' }, "abc-123", 0);
+  assert.match(html, /&lt;img src=x onerror=&quot;alert\(1\)&quot;&gt;/);
+  assert.doesNotMatch(html, /<img src=x/);
 });
 
 test("missing configuration and rejected sends are reported without throwing", async () => {

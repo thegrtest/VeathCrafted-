@@ -1,3 +1,6 @@
+import { renderOwnerEmailHtml, renderOwnerEmailText, type OwnerEmail } from "./email-template.ts";
+import { shopContent } from "./shop-content.ts";
+
 type OrderNotification = {
   customerName: string;
   customerEmail: string;
@@ -23,30 +26,51 @@ type MailConfig = {
 
 export type NotificationResult = "accepted" | "unavailable";
 
-export function formatOrderNotification(order: OrderNotification, id: string, estimatedTotalCents: number) {
-  return [
-    `Veath Crafted ${order.consultationRequested ? "consultation and soap request" : "soap request"}`,
-    `Reference: ${id}`,
-    "",
-    `Customer: ${order.customerName}`,
-    `Reply to: ${order.customerEmail}`,
-    `Delivery ZIP: ${order.deliveryZip}`,
-    `Bars: ${order.quantity}`,
-    estimatedTotalCents > 0 ? `Starting estimate: $${(estimatedTotalCents / 100).toFixed(2)} (before shipping or custom changes)` : "Price: quote after reviewing the request",
-    `Scent: ${order.scent}`,
-    `Texture: ${order.texture}`,
-    `Please include: ${order.preferredIngredients.join(", ") || "no preference"}`,
-    `Please avoid: ${order.avoidedIngredients.join(", ") || "none listed"}`,
-    "",
-    `Water used when washing: ${order.waterSource}`,
-    `Water supplier: ${order.waterSupplier || "not provided"}`,
-    `Hardness: ${order.hardness === null ? "not provided" : `${order.hardness} mg/L as CaCO3`}`,
-    `Water and ingredient notes: ${order.notes || "none"}`,
-    `Consultation requested: ${order.consultationRequested ? "yes" : "no"}`,
-    `Consultation topics: ${order.consultationNotes || "none"}`,
-    "",
-    "This is a request, not a paid order. Reply to the customer to confirm the recipe, timing, shipping, and quote.",
-  ].join("\n");
+function orderEmail(order: OrderNotification, id: string, estimatedTotalCents: number): OwnerEmail {
+  const scent = shopContent.scents.find((item) => item.id === order.scent)?.label || order.scent;
+  const texture = shopContent.textures.find((item) => item.id === order.texture)?.label || order.texture;
+  const waterSource: Record<string, string> = { public: "Public water", "private-well": "Private well", softened: "Softened water", unknown: "Not sure" };
+  return {
+    category: order.consultationRequested ? "Consultation + custom soap request" : "Custom soap request",
+    title: order.consultationRequested ? "A new consultation request" : "A new soap request",
+    summary: `${order.customerName} has shared their preferences for a made-to-order soap. This request has not been paid.`,
+    reference: id,
+    sections: [
+      { title: "Customer & request", rows: [
+        { label: "Customer", value: order.customerName },
+        { label: "Reply to", value: order.customerEmail },
+        { label: "Delivery ZIP", value: order.deliveryZip },
+        { label: "Bars requested", value: String(order.quantity) },
+        estimatedTotalCents > 0
+          ? { label: "Starting estimate", value: `$${(estimatedTotalCents / 100).toFixed(2)} before shipping or custom changes` }
+          : { label: "Price", value: "quote after reviewing the request" },
+      ] },
+      { title: "Soap preferences", rows: [
+        { label: "Scent", value: scent },
+        { label: "Texture", value: texture },
+        { label: "Please include", value: order.preferredIngredients.join(", ") || "No preference" },
+        { label: "Please avoid", value: order.avoidedIngredients.join(", ") || "None listed" },
+      ] },
+      { title: "Water & other notes", rows: [
+        { label: "Water source", value: waterSource[order.waterSource] || order.waterSource },
+        { label: "Supplier", value: order.waterSupplier || "Not provided" },
+        { label: "Hardness", value: order.hardness === null ? "Not provided" : `${order.hardness} mg/L as CaCO3` },
+        { label: "Notes", value: order.notes || "None" },
+      ] },
+      ...(order.consultationRequested ? [{ title: "Consultation", rows: [
+        { label: "Topics to discuss", value: order.consultationNotes || "No topics provided" },
+      ] }] : []),
+    ],
+    nextStep: "Reply to this email to confirm the formula, timing, shipping, and final quote before making the soap.",
+  };
+}
+
+export function formatOrderNotification(order: OrderNotification, id: string, estimatedTotalCents: number): string {
+  return renderOwnerEmailText(orderEmail(order, id, estimatedTotalCents));
+}
+
+export function formatOrderNotificationHtml(order: OrderNotification, id: string, estimatedTotalCents: number): string {
+  return renderOwnerEmailHtml(orderEmail(order, id, estimatedTotalCents));
 }
 
 export async function sendOrderNotification(
@@ -71,8 +95,9 @@ export async function sendOrderNotification(
         from: config.from,
         to: recipients,
         reply_to: order.customerEmail,
-        subject: `${order.consultationRequested ? "Consultation + soap request" : "New soap request"} · ${id.slice(0, 8).toUpperCase()}`,
+        subject: `Veath Crafted · ${order.consultationRequested ? "Consultation request" : "Soap request"} #${id.slice(0, 8).toUpperCase()}`,
         text: formatOrderNotification(order, id, estimatedTotalCents),
+        html: formatOrderNotificationHtml(order, id, estimatedTotalCents),
       }),
       signal: AbortSignal.timeout(8000),
     });
